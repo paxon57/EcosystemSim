@@ -53,7 +53,7 @@ int main()
     srand(time(NULL));
 
     // Test
-    const int numCreatures = 1000;
+    const int numCreatures = 10000;
     Creature creatures[numCreatures];
     for (size_t i = 0; i < numCreatures; i++)
     {
@@ -67,7 +67,8 @@ int main()
     }
     /////////////////////////
     
-    
+    unsigned long frame = 0;
+
     // Main loop
     while (window.isOpen()) {
         // Window setup
@@ -78,9 +79,10 @@ int main()
         view.setSize(sf::Vector2f(window.getSize()));
         
         // Get frame time
+        frame += 1;
         float deltaTime = frameTimeClock.getElapsedTime().asSeconds();
         frameTimeClock.restart();
-        printf("Frametime: %f ms FPS: %f\n", deltaTime*1000.f, 1.f/deltaTime);
+        printf("Frame: %lu | Frametime: %fms | FPS: %f\n", frame, deltaTime*1000.f, 1.f/deltaTime);
 
         // Updates
         cam.update(deltaTime);

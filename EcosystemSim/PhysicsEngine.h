@@ -10,7 +10,7 @@ class PhysicsEngine
 
 		float worldLimit;
 
-		sf::Vector2f move(CircleCollider& mover, sf::Vector2f moveBy);
+		sf::Vector2f move(CircleCollider* mover, sf::Vector2f moveBy);
 		
 		void init(CircleCollider* collider);
 		void remove(CircleCollider* collider);

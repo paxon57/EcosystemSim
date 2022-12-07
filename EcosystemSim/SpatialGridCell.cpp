@@ -1,8 +1,6 @@
-#include "CircleCollider.h"
 #include "SpatialGridCell.h"
 
-SpatialGridCell::SpatialGridCell()
-{}
+SpatialGridCell::SpatialGridCell() {}
 
 void SpatialGridCell::add(CircleCollider* colliderPtr)
 {
@@ -11,16 +9,11 @@ void SpatialGridCell::add(CircleCollider* colliderPtr)
 
 void SpatialGridCell::remove(CircleCollider* colliderPtr)
 {
-	for (size_t i = 0; i < colliders.size(); i++)
+	for (std::_Vector_iterator it = colliders.begin(); it != colliders.end(); it++)
 	{
-		if (colliders[i] == colliderPtr) {
-			colliders.erase(colliders.begin() + i);
+		if (*it == colliderPtr) {
+			colliders.erase(it);
 			break;
 		}
 	}
-}
-
-std::vector<CircleCollider*> SpatialGridCell::getColliders()
-{
-	return colliders;
 }

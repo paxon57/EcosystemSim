@@ -1,6 +1,8 @@
 #pragma once
-#include "global.h"
+//#include "global.h"
 #include "SpatialGridCell.h"
+
+const size_t GRID_SIZE = 64;
 
 class SpatialGrid
 {
@@ -11,8 +13,7 @@ class SpatialGrid
 
 	private:
 		float cellSize = 0.f;
-
-		SpatialGridCell grid[100];
+		SpatialGridCell grid[GRID_SIZE*GRID_SIZE];
 		int getIndex(float x, float y);
 };
 

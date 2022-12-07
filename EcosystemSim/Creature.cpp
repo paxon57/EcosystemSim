@@ -16,7 +16,8 @@ void Creature::update(float deltaTime) {
 		body = &predatorBody;
 
 	// Move
-	pos = phys.move(collider, sf::Vector2f(0.f, 5.f));
+	
+	pos = phys.move(&collider, sf::Vector2f(0.f, 5.f));
 
 	// Set body pos
 	(*body).setPosition(pos);

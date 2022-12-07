@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
-
-class CircleCollider;
+#include "CircleCollider.h"
 
 class SpatialGridCell
 {
@@ -11,6 +10,5 @@ class SpatialGridCell
 
 		void add(CircleCollider* colliderPtr);
 		void remove(CircleCollider* colliderPtr);
-		std::vector<CircleCollider*> getColliders();
 };
 
