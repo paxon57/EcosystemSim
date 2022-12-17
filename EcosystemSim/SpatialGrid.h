@@ -9,7 +9,7 @@ class SpatialGrid
 	public:
 		SpatialGrid(float worldSize = 100.f);
 		void move(CircleCollider* collider, sf::Vector2f pos);
-		std::vector<CircleCollider*> getColliders(sf::Vector2f pos, float radius);
+		std::vector<CircleCollider*> getColliders(sf::Vector2f pos, float radius, sf::Vector2f direction = sf::Vector2f(0, 0));
 
 	private:
 		float cellSize = 0.f;

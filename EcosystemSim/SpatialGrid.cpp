@@ -22,45 +22,35 @@ void SpatialGrid::move(CircleCollider* pCollider, sf::Vector2f pos)
 	}
 }
 
-std::vector<CircleCollider*> SpatialGrid::getColliders(sf::Vector2f pos, float radius)
+std::vector<CircleCollider*> SpatialGrid::getColliders(sf::Vector2f pos, float distance, sf::Vector2f direction)
 {
 	std::vector<CircleCollider*> colliders;
-	int i = getIndex(pos.x, pos.y);
-	if (i == -1) return colliders;
+	int mainI = getIndex(pos.x, pos.y);
+	if (mainI == -1) return colliders;
 
-	int mainI = i;
-	for (CircleCollider* pCollider : grid[i].colliders) {
-		colliders.push_back(pCollider);
-	}
-	// TODO? Check corners
-	// Check left
-	i = getIndex(pos.x - radius, pos.y);
-	if (i != mainI && i != -1) {
-		for (CircleCollider* pCollider : grid[i].colliders) {
-			colliders.push_back(pCollider);
+	int cellsInRange = ceil(distance / cellSize);
+	int xP = (direction.x > 0.f) ? cellsInRange : 0;
+	int xN = (direction.x < 0.f) ? cellsInRange : 0;
+	int yP = (direction.y > 0.f) ? cellsInRange : 0;
+	int yN = (direction.y < 0.f) ? cellsInRange : 0;
+
+	for (size_t dx = -xN; dx <= xP; dx++) 
+	{
+		int x = (mainI % GRID_SIZE) + dx;
+		if (x < 0 || x > GRID_SIZE) continue;
+
+		for (size_t dy = -yN; dy < yP; dy++)
+		{
+			int y = (floor(mainI / GRID_SIZE)) + dy;
+			if (y < 0 || y > GRID_SIZE) continue;
+
+			int index = y * GRID_SIZE + x;
+			for (CircleCollider* pCollider : grid[index].colliders) {
+				colliders.push_back(pCollider);
+			}
 		}
 	}
-	// Check right
-	i = getIndex(pos.x + radius, pos.y);
-	if (i != mainI && i != -1) {
-		for (CircleCollider* pCollider : grid[i].colliders) {
-			colliders.push_back(pCollider);
-		}
-	}
-	// Check top
-	i = getIndex(pos.x, pos.y + radius);
-	if (i != mainI && i != -1) {
-		for (CircleCollider* pCollider : grid[i].colliders) {
-			colliders.push_back(pCollider);
-		}
-	}
-	// Check down
-	i = getIndex(pos.x, pos.y - radius);
-	if (i != mainI && i != -1) {
-		for (CircleCollider* pCollider : grid[i].colliders) {
-			colliders.push_back(pCollider);
-		}
-	}
+
 	return colliders;
 }
 

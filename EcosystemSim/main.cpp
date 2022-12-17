@@ -53,7 +53,7 @@ int main()
     srand(time(NULL));
 
     // Test
-    const int numCreatures = 10000;
+    const int numCreatures = 2000;
     Creature creatures[numCreatures];
     for (size_t i = 0; i < numCreatures; i++)
     {

@@ -18,7 +18,7 @@ sf::Vector2f PhysicsEngine::move(CircleCollider* mover, sf::Vector2f moveBy)
 
 	// Check for other colliders
 	bool firstCollision = true;
-	std::vector<CircleCollider*> colliders = spatialGrid.getColliders(*mover->pPosition, mover->radius * 2.f);
+	std::vector<CircleCollider*> colliders = spatialGrid.getColliders(*mover->pPosition, mover->radius * 2.f, moveBy);
 	for (CircleCollider* collider : colliders)
 	{
 		// Ignore self
