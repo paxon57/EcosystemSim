@@ -1,6 +1,7 @@
 #include "SpatialGridCell.h"
 
-SpatialGridCell::SpatialGridCell() {}
+SpatialGridCell::SpatialGridCell():
+colliders(std::vector<CircleCollider*>()){}
 
 void SpatialGridCell::add(CircleCollider* colliderPtr)
 {

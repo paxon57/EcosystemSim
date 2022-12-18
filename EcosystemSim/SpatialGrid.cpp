@@ -34,17 +34,21 @@ std::vector<CircleCollider*> SpatialGrid::getColliders(sf::Vector2f pos, float d
 	int yP = (direction.y > 0.f) ? cellsInRange : 0;
 	int yN = (direction.y < 0.f) ? cellsInRange : 0;
 
-	for (size_t dx = -xN; dx <= xP; dx++) 
-	{
-		int x = (mainI % GRID_SIZE) + dx;
-		if (x < 0 || x > GRID_SIZE) continue;
+	//printf("NEXT: X+: %i, X-: %i, Y+: %i, Y-: %i\n", xP, xN, yP, yN);
 
-		for (size_t dy = -yN; dy < yP; dy++)
+	for (size_t dy = -yN; dy <= yP; dy++)
+	{
+		int y = (floor(mainI / GRID_SIZE)) + dy;
+		if (y < 0 || y >= GRID_SIZE) continue;
+
+		for (size_t dx = -xN; dx <= xP; dx++)
 		{
-			int y = (floor(mainI / GRID_SIZE)) + dy;
-			if (y < 0 || y > GRID_SIZE) continue;
+			int x = (mainI % GRID_SIZE) + dx;
+			if (x < 0 || x >= GRID_SIZE) continue;
 
 			int index = y * GRID_SIZE + x;
+
+			//printf("Adding colliders from cell with index %i while mainI = %i\n", index, mainI);
 			for (CircleCollider* pCollider : grid[index].colliders) {
 				colliders.push_back(pCollider);
 			}
