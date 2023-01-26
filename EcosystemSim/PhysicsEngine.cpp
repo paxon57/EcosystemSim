@@ -10,13 +10,7 @@ sf::Vector2f PhysicsEngine::move(CircleCollider* mover, sf::Vector2f moveBy)
 {
 	sf::Vector2f targetPos = *mover->pPosition + moveBy;
 
-	// Check for map bounds
-	if (targetPos.x - mover->radius < -worldLimit) targetPos.x = -worldLimit + mover->radius;
-	if (targetPos.x + mover->radius > worldLimit) targetPos.x = worldLimit - mover->radius;
-	if (targetPos.y - mover->radius < -worldLimit) targetPos.y = -worldLimit + mover->radius;
-	if (targetPos.y + mover->radius > worldLimit) targetPos.y = worldLimit - mover->radius;
-
-	// Check for other colliders
+	// Check for colliders
 	bool firstCollision = true;
 	std::vector<CircleCollider*> colliders = spatialGrid.getColliders(*mover->pPosition, mover->radius * 2.f, moveBy);
 	for (CircleCollider* collider : colliders)
@@ -44,6 +38,13 @@ sf::Vector2f PhysicsEngine::move(CircleCollider* mover, sf::Vector2f moveBy)
 				targetPos = (targetPos + (colliderPos + normalized * rSum)) / 2.f;
 		}
 	}
+
+	// Check for map bounds
+	if (targetPos.x - mover->radius < -worldLimit) targetPos.x = -worldLimit + mover->radius;
+	if (targetPos.x + mover->radius > worldLimit) targetPos.x = worldLimit - mover->radius;
+	if (targetPos.y - mover->radius < -worldLimit) targetPos.y = -worldLimit + mover->radius;
+	if (targetPos.y + mover->radius > worldLimit) targetPos.y = worldLimit - mover->radius;
+
 	spatialGrid.move(mover, targetPos);
 	return targetPos;
 
