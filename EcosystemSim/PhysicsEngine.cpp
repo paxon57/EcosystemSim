@@ -42,9 +42,6 @@ void PhysicsEngine::physUpdate(float dt)
 	// Update every collider
 	for (Collider* collider : colliders)
 	{
-		// Recalculate gridIdx
-		recalculateCellIndex(collider);
-
 		int i = collider->gridIdx;
 		int x = i % 128;
 		int y = floor(i / 128);
@@ -62,6 +59,8 @@ void PhysicsEngine::physUpdate(float dt)
 				// Calculate current index
 				int curI = i + dx + (dy * 128);
 
+				std::vector<Collider*> toRecalculate;
+
 				// Collide
 				for (Collider* targetCollider : grid[curI].colliders) {
 					if (targetCollider == nullptr) continue;
@@ -78,15 +77,18 @@ void PhysicsEngine::physUpdate(float dt)
 						collider->pos += normalizedDiff * (intersection / 2);
 						targetCollider->pos -= normalizedDiff * (intersection / 2);
 						keepInBounds(targetCollider);
-						// Recalculate grid index
-						//recalculateCellIndex(targetCollider); ?????
+						toRecalculate.push_back(targetCollider);
 					}
 				}
+
+				// Recalc
+				for (Collider* targetCollider : toRecalculate) recalculateCellIndex(targetCollider);
 			}
 		}
 		keepInBounds(collider);
 
-		
+		// Recalculate gridIdx
+		recalculateCellIndex(collider);
 	}
 }
 
