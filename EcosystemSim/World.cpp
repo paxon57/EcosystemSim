@@ -7,7 +7,6 @@ World::World(float _size){
 	area.setFillColor(sf::Color(236, 240, 241));
 	area.setOutlineColor(sf::Color(52, 73, 94));
 	area.setOutlineThickness(300.f);
-	area.setOrigin(sf::Vector2f(size/2.f, size/2.f));
 }
 
 void World::draw()

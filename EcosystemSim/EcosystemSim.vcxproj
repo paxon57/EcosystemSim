@@ -136,22 +136,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="CircleCollider.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhysGridCell.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
-    <ClCompile Include="SpatialGrid.cpp" />
-    <ClCompile Include="SpatialGridCell.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h" />
-    <ClInclude Include="CircleCollider.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="PhysGridCell.h" />
     <ClInclude Include="PhysicsEngine.h" />
-    <ClInclude Include="SpatialGrid.h" />
-    <ClInclude Include="SpatialGridCell.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

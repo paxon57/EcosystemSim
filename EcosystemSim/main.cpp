@@ -4,6 +4,7 @@
 #include "World.h"
 #include "CameraController.h"
 #include "Creature.h"
+#include "PhysicsEngine.h"
 
 sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(512, 512), "Ecosystem Simulation", sf::Style::Close | sf::Style::Resize);
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
@@ -11,9 +12,9 @@ sf::CircleShape preyBody = sf::CircleShape(50.f);
 sf::CircleShape predatorBody = sf::CircleShape(50.f);
 sf::Clock frameTimeClock;
 
-World world = World(12800.f);
+World world(12800.f);
+PhysicsEngine phys(12800.f);
 CameraController cam(view);
-PhysicsEngine phys = PhysicsEngine(12800.f);
 
 void eventHandler(sf::RenderWindow& window) {
     sf::Event evnt;
@@ -57,13 +58,15 @@ int main()
     Creature creatures[numCreatures];
     for (size_t i = 0; i < numCreatures; i++)
     {
-        float x = rand() / (float)RAND_MAX * 10000.f - 5000.f;
-        float y = rand() / (float)RAND_MAX * 10000.f - 5000.f;
+        float x = rand() / (float)RAND_MAX * 12800.f;
+        float y = rand() / (float)RAND_MAX * 12800.f;
         creatures[i].pos = sf::Vector2f(x, y);
         if (rand()%2)
             creatures[i].type = CreatureType::Prey;
         else
             creatures[i].type = CreatureType::Predator;
+        // Init physics for creature
+        phys.addCollider(&creatures[i].collider);
     }
     /////////////////////////
     
@@ -87,14 +90,13 @@ int main()
         // Updates
         cam.update(deltaTime);
         world.draw();
-
-        // Test
+        // Test ///////////////////////////////
         for (size_t i = 0; i < numCreatures; i++)
         {
             creatures[i].update(deltaTime);
         }
         /// /////////////////////////////////
-
+        phys.update(deltaTime, 4);
 
         window.display();
     }

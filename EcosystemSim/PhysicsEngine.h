@@ -1,22 +1,25 @@
 #pragma once
-#include <vector>
 #include <SFML/Graphics.hpp>
-#include "SpatialGrid.h"
+#include "PhysGridCell.h"
 
 class PhysicsEngine
 {
 	public:
-		PhysicsEngine(float mapSize);
-
-		float worldLimit;
-
-		sf::Vector2f move(CircleCollider* mover, sf::Vector2f moveBy);
+		// Init engine and set bounds
+		PhysicsEngine(float _size);
 		
-		void init(CircleCollider* collider);
-		void remove(CircleCollider* collider);
+		void update(float dt, int subSteps);
+		void addCollider(Collider* pCollider);
+		void removeCollider(Collider* pCollider);
 
 	private:
-		SpatialGrid spatialGrid;
+		std::vector<Collider*> colliders;
+		PhysGridCell grid[128*128];
 
-		std::vector<CircleCollider*> colliders;
+		float size;
+
+		void physUpdate(float dt);
+		int getCellIndex(float _x, float _y);
+		void recalculateCellIndex(Collider* pCollider);
+		void keepInBounds(Collider* pCollider);
 };

@@ -1,10 +1,9 @@
 #include "Creature.h"
+#include "global.h"
 
 Creature::Creature(CreatureType _type):
-collider(&pos, 50.f) {
-	type = _type;
-	phys.init(&collider);
-}
+	collider(Collider(pos)),
+	type(_type) {}
 
 void Creature::update(float deltaTime) {
 
@@ -15,9 +14,8 @@ void Creature::update(float deltaTime) {
 	else
 		body = &predatorBody;
 
-	// Move
-	
-	pos = phys.move(&collider, sf::Vector2f(0.f, 5.f));
+	// Move 1m/s down
+	move(sf::Vector2f(0.f, 100.f * deltaTime));
 
 	// Set body pos
 	(*body).setPosition(pos);
@@ -26,7 +24,12 @@ void Creature::update(float deltaTime) {
 	window.draw(*body);
 }
 
+void Creature::move(sf::Vector2f move)
+{
+	pos = pos + move;
+}
+
 Creature::~Creature()
 {
-	phys.remove(&collider);
+	
 }
