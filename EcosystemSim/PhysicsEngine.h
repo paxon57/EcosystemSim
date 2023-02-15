@@ -5,21 +5,24 @@
 class PhysicsEngine
 {
 	public:
-		// Init engine and set bounds
 		PhysicsEngine(float _size);
-		
-		void update(float dt, int subSteps);
-		void addCollider(Collider* pCollider);
-		void removeCollider(Collider* pCollider);
+		int newCollider(sf::Vector2f _pos, float _radius = 50.f);
+		void removeCollider(int index);
+		void update(float dt, int subSteps = 1);
+		sf::Vector2f* getPosPointer(int index);
+		void move(int index, sf::Vector2f newPos);
 
 	private:
-		std::vector<Collider*> colliders;
-		PhysGridCell grid[128*128];
-
 		float size;
 
+		Collider colliders[20000];
+		PhysGridCell grid[128*128];
+
+		int getGridIndexFromPos(sf::Vector2f _pos);
+		int getGridIndex(int _x, int _y);
 		void physUpdate(float dt);
-		int getCellIndex(float _x, float _y);
-		void recalculateCellIndex(Collider* pCollider);
-		void keepInBounds(Collider* pCollider);
+		void checkCellCollisions(int _cellIndex, int _otherCellIndex);
+		bool collide(int _index, int _otherIndex);
+		void solveCollision(int _index, int _otherIndex);
+		void keepInBounds(int _index);
 };

@@ -4,10 +4,11 @@
 class Collider
 {
 	public:
-		Collider(sf::Vector2f& _pos, float _radius = 50.f);
+		Collider(sf::Vector2f _pos = sf::Vector2f(), float _radius = 50.f);
 
 		float radius;
-		sf::Vector2f& pos;
+		sf::Vector2f pos;
 		int gridIdx;
+		int index;
 };
 

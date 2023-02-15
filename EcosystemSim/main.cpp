@@ -53,22 +53,19 @@ int main()
     // Random seed
     srand(time(NULL));
 
-    // Test
-    const int numCreatures = 5000;
-    Creature creatures[numCreatures];
+    // Test //////////////////////////////////
+    const int numCreatures = 3000;
+    std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {
-        float x = rand() / (float)RAND_MAX * 12800.f;
-        float y = rand() / (float)RAND_MAX * 12800.f;
-        creatures[i].pos = sf::Vector2f(x, y);
-        if (rand()%2)
-            creatures[i].type = CreatureType::Prey;
-        else
-            creatures[i].type = CreatureType::Predator;
-        // Init physics for creature
-        phys.addCollider(&creatures[i].collider);
+        float x = (rand() / (float)RAND_MAX) * 12800.f;
+        float y = (rand() / (float)RAND_MAX) * 12800.f;
+        bool type = round(rand() / (float)RAND_MAX);
+        if (type) creatures.push_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
+        else creatures.push_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
+        
     }
-    /////////////////////////
+    /////////////////////////////////////////
     
     unsigned long frame = 0;
 
@@ -91,12 +88,16 @@ int main()
         cam.update(deltaTime);
         world.draw();
         // Test ///////////////////////////////
-        for (size_t i = 0; i < numCreatures; i++)
-        {
-            creatures[i].update(deltaTime);
+        for (Creature creature : creatures) {
+            creature.update(deltaTime);
         }
-        /// /////////////////////////////////
-        phys.update(deltaTime, 1);
+
+        phys.update(deltaTime);
+
+        for (Creature creature : creatures) {
+            creature.draw();
+        }
+        ////////////////////////////////////
 
         window.display();
     }

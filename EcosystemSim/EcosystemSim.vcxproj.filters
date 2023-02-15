@@ -36,10 +36,10 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsEngine.cpp">
+    <ClCompile Include="PhysGridCell.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="PhysGridCell.cpp">
+    <ClCompile Include="PhysicsEngine.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,10 +59,10 @@
     <ClInclude Include="Collider.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsEngine.h">
+    <ClInclude Include="PhysGridCell.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="PhysGridCell.h">
+    <ClInclude Include="PhysicsEngine.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>

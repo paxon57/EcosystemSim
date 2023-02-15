@@ -1,126 +1,146 @@
 #include "PhysicsEngine.h"
 
-PhysicsEngine::PhysicsEngine(float _size):
+PhysicsEngine::PhysicsEngine(float _size) :
 	size(_size)
 {
-	// Init grid array
-	for (int i = 0; i < 128*128; i++)
+}
+
+int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
+{
+	int index = -1;
+	// Look for free spot in array
+	for (int i = 0; i < 20000; i++)
 	{
-		grid[i] = PhysGridCell();
+		// Check if free
+		if (colliders[i].index == -1) {
+			index = i;
+
+			// Add collider
+			colliders[i] = Collider(_pos, _radius);
+			colliders[i].index = i;
+			int gridIndex = getGridIndexFromPos(_pos);
+			colliders[i].gridIdx = gridIndex;
+
+			// Add index to grid
+			grid[gridIndex].colliderIdx.push_back(i);
+
+			break;
+		}
 	}
+
+	return index;
+}
+
+void PhysicsEngine::removeCollider(int index)
+{
+	// Remove from grid
+	int gridIndex = colliders[index].gridIdx;
+	grid[gridIndex].remove(index);
+	// Disable from main array
+	colliders[index].index = -1;
 }
 
 void PhysicsEngine::update(float dt, int subSteps)
 {
 	float subDt = dt / subSteps;
-
 	for (int i = 0; i < subSteps; i++)
 	{
 		physUpdate(subDt);
 	}
 }
 
-void PhysicsEngine::addCollider(Collider* pCollider)
+sf::Vector2f* PhysicsEngine::getPosPointer(int index)
 {
-	colliders.push_back(pCollider);
-	int idx = getCellIndex(pCollider->pos.x, pCollider->pos.y);
-	pCollider->gridIdx = idx;
-	grid[idx].colliders.push_back(pCollider);
+	return &colliders[index].pos;
 }
 
-void PhysicsEngine::removeCollider(Collider* pCollider)
+void PhysicsEngine::move(int index, sf::Vector2f newPos)
 {
-	std::vector<Collider*>::iterator position = std::find(grid[pCollider->gridIdx].colliders.begin(), grid[pCollider->gridIdx].colliders.end(), pCollider);
-	grid[pCollider->gridIdx].colliders.erase(position);
+	colliders[index].pos = newPos;
+	keepInBounds(index);
+	int newGridIndex = getGridIndexFromPos(colliders[index].pos);
+	if (newGridIndex != colliders[index].gridIdx) {
+		grid[colliders[index].gridIdx].remove(index);
+		grid[newGridIndex].colliderIdx.push_back(index);
+		colliders[index].gridIdx = newGridIndex;
+	}
+}
 
-	position = std::find(colliders.begin(), colliders.end(), pCollider);
-	colliders.erase(position);
+int PhysicsEngine::getGridIndexFromPos(sf::Vector2f _pos)
+{
+	int x = floorf((int)(_pos.x / 100.f) % 128);
+	int y = floorf(_pos.y / 100.f);
+	int i = y * 128 + x;
+	return i;
+}
+
+int PhysicsEngine::getGridIndex(int _x, int _y)
+{
+	return _y * 128 + _x;
 }
 
 void PhysicsEngine::physUpdate(float dt)
 {
-	// Update every collider
-	for (Collider* collider : colliders)
+	// Loop through grid without edges
+	for (int x = 1; x < 127; x++)
 	{
-		int i = collider->gridIdx;
-		int x = i % 128;
-		int y = floor(i / 128);
-
-		// Loop around the cell
-		for (int dx = -1; dx <= 1; dx++)
+		for (int y = 1; y < 127; y++)
 		{
-			// Check for map edge
-			if (x + dx < 0 || x + dx >= 128) continue;
-			for (int dy = -1; dy < 1; dy++)
+			int cellIndex = getGridIndex(x, y);
+			// Loop through neighbours
+			for (int dx = -1; dx <= 1; dx++)
 			{
-				// Check for map edge
-				if (y + dy < 0 || y + dy >= 128) continue;
-
-				// Calculate current index
-				int curI = i + dx + (dy * 128);
-
-				//////////////////
-				int dupeCount = 0;
-				Collider* lastPtr = nullptr;
-				//////////////////
-
-				std::vector<Collider*> toRecalculate;
-
-				// Collide
-				for (Collider* targetCollider : grid[curI].colliders) {
-					if (targetCollider == nullptr) continue;
-					// Check for self
-					if (targetCollider == collider) continue;
-
-					// Check for collision
-					sf::Vector2f diff = collider->pos - targetCollider->pos;
-					float dist = sqrt(pow(diff.x, 2) + pow(diff.y, 2));
-					float intersection = collider->radius + targetCollider->radius - dist;
-					if (intersection > 0) {
-						// Separate colliders
-						sf::Vector2f normalizedDiff = diff / dist;
-						collider->pos += normalizedDiff * (intersection);
-						targetCollider->pos -= normalizedDiff * (intersection / 2);
-						keepInBounds(targetCollider);
-						toRecalculate.push_back(targetCollider);
-					}
+				for (int dy = -1; dy <= 1; dy++)
+				{
+					int otherCellIndex = getGridIndex(x + dx, y + dy);
+					checkCellCollisions(cellIndex, otherCellIndex);
 				}
-
-				// Recalc
-				for (Collider* targetCollider : toRecalculate) recalculateCellIndex(targetCollider);
 			}
 		}
-		keepInBounds(collider);
-
-		// Recalculate gridIdx
-		recalculateCellIndex(collider);
 	}
 }
 
-int PhysicsEngine::getCellIndex(float _x, float _y)
+void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
 {
-	int x = floorf(_x / 100.f);
-	int y = floorf(_y / 100.f);
-	int idx = y * 128 + x;
-	return idx;
-}
-
-void PhysicsEngine::recalculateCellIndex(Collider* pCollider)
-{
-	int targetIndex = getCellIndex(pCollider->pos.x, pCollider->pos.y);
-
-	int currentIndex = pCollider->gridIdx;
-	if (currentIndex != targetIndex) {
-		std::vector<Collider*>::iterator position = std::find(grid[currentIndex].colliders.begin(), grid[currentIndex].colliders.end(), pCollider);
-		grid[currentIndex].colliders.erase(position);
-		grid[targetIndex].colliders.push_back(pCollider);
-		pCollider->gridIdx = targetIndex;
+	for (int index1 : grid[_cellIndex].colliderIdx) {
+		for (int index2 : grid[_otherCellIndex].colliderIdx) {
+			// Skip if same object
+			if (index1 == index2) continue;
+			// Check collision
+			if (collide(index1, index2)) {
+				
+			}
+		}
 	}
 }
 
-void PhysicsEngine::keepInBounds(Collider* pCollider) {
-	if (pCollider->pos.x < pCollider->radius) pCollider->pos.x = pCollider->radius;
-	if (pCollider->pos.y < pCollider->radius) pCollider->pos.y = pCollider->radius;
-	if (pCollider->pos.x + pCollider->radius > 12800.f) pCollider->pos.x = 12800.f - pCollider->radius;
-	if (pCollider->pos.y + pCollider->radius > 12800.f) pCollider->pos.y = 12800.f - pCollider->radius;
+bool PhysicsEngine::collide(int _index, int _otherIndex)
+{
+	float sum = colliders[_index].radius + colliders[_otherIndex].radius;
+	sf::Vector2f diff = colliders[_index].pos - colliders[_otherIndex].pos;
+	float distSqr = diff.x*diff.x + diff.y*diff.y;
+	return (distSqr < sum * sum);
+}
+
+void PhysicsEngine::solveCollision(int _index, int _otherIndex)
+{
+	float sum = colliders[_index].radius + colliders[_otherIndex].radius;
+	sf::Vector2f diff = colliders[_index].pos - colliders[_otherIndex].pos;
+	float dist = sqrt(diff.x * diff.x + diff.y * diff.y);
+	sf::Vector2f normalized = sf::Vector2f(diff.x / dist, diff.y / dist);
+
+	float intersection = sum - dist;
+	colliders[_index].pos += normalized * (intersection / 2.f);
+	colliders[_otherIndex].pos -= normalized * (intersection / 2.f);
+
+	keepInBounds(_index);
+	keepInBounds(_otherIndex);
+}
+
+void PhysicsEngine::keepInBounds(int _index)
+{
+	if (colliders[_index].pos.x < colliders[_index].radius) colliders[_index].pos.x = colliders[_index].radius;
+	if (colliders[_index].pos.y < colliders[_index].radius) colliders[_index].pos.y = colliders[_index].radius;
+	if (colliders[_index].pos.x > size - colliders[_index].radius) colliders[_index].pos.x = size - colliders[_index].radius;
+	if (colliders[_index].pos.y > size - colliders[_index].radius) colliders[_index].pos.y = size - colliders[_index].radius;
 }

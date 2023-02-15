@@ -4,7 +4,11 @@
 
 class PhysGridCell
 {
-public:
-	std::vector<Collider*> colliders;
+	public:
+		PhysGridCell();
+
+		std::vector<int> colliderIdx;
+
+		void remove(int index);
 };
 
