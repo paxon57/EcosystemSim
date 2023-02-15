@@ -54,7 +54,7 @@ int main()
     srand(time(NULL));
 
     // Test
-    const int numCreatures = 2000;
+    const int numCreatures = 5000;
     Creature creatures[numCreatures];
     for (size_t i = 0; i < numCreatures; i++)
     {
@@ -96,7 +96,7 @@ int main()
             creatures[i].update(deltaTime);
         }
         /// /////////////////////////////////
-        phys.update(deltaTime, 4);
+        phys.update(deltaTime, 1);
 
         window.display();
     }

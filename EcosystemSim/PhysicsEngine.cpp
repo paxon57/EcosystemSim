@@ -30,11 +30,11 @@ void PhysicsEngine::addCollider(Collider* pCollider)
 
 void PhysicsEngine::removeCollider(Collider* pCollider)
 {
-	remove(grid[pCollider->gridIdx].colliders.begin(),
-		grid[pCollider->gridIdx].colliders.end(),
-		pCollider);
+	std::vector<Collider*>::iterator position = std::find(grid[pCollider->gridIdx].colliders.begin(), grid[pCollider->gridIdx].colliders.end(), pCollider);
+	grid[pCollider->gridIdx].colliders.erase(position);
 
-	remove(colliders.begin(), colliders.end(), pCollider);
+	position = std::find(colliders.begin(), colliders.end(), pCollider);
+	colliders.erase(position);
 }
 
 void PhysicsEngine::physUpdate(float dt)
@@ -59,6 +59,11 @@ void PhysicsEngine::physUpdate(float dt)
 				// Calculate current index
 				int curI = i + dx + (dy * 128);
 
+				//////////////////
+				int dupeCount = 0;
+				Collider* lastPtr = nullptr;
+				//////////////////
+
 				std::vector<Collider*> toRecalculate;
 
 				// Collide
@@ -74,7 +79,7 @@ void PhysicsEngine::physUpdate(float dt)
 					if (intersection > 0) {
 						// Separate colliders
 						sf::Vector2f normalizedDiff = diff / dist;
-						collider->pos += normalizedDiff * (intersection / 2);
+						collider->pos += normalizedDiff * (intersection);
 						targetCollider->pos -= normalizedDiff * (intersection / 2);
 						keepInBounds(targetCollider);
 						toRecalculate.push_back(targetCollider);
@@ -106,7 +111,8 @@ void PhysicsEngine::recalculateCellIndex(Collider* pCollider)
 
 	int currentIndex = pCollider->gridIdx;
 	if (currentIndex != targetIndex) {
-		remove(grid[currentIndex].colliders.begin(), grid[currentIndex].colliders.end(), pCollider);
+		std::vector<Collider*>::iterator position = std::find(grid[currentIndex].colliders.begin(), grid[currentIndex].colliders.end(), pCollider);
+		grid[currentIndex].colliders.erase(position);
 		grid[targetIndex].colliders.push_back(pCollider);
 		pCollider->gridIdx = targetIndex;
 	}

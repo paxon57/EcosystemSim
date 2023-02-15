@@ -15,7 +15,9 @@ void Creature::update(float deltaTime) {
 		body = &predatorBody;
 
 	// Move 1m/s down
-	move(sf::Vector2f(0.f, 100.f * deltaTime));
+	sf::Vector2f nextMove = lastMove + sf::Vector2f((rand() / (float)RAND_MAX) * 1.f - 0.5f, (rand() / (float)RAND_MAX) * 1.f - 0.5f);
+	move(nextMove * 10.f * deltaTime);
+	lastMove = nextMove;
 
 	// Set body pos
 	(*body).setPosition(pos);

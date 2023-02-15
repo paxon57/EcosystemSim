@@ -16,5 +16,8 @@ class Creature
 		~Creature();
 		void update(float deltaTime);
 		void move(sf::Vector2f move);
+
+	private:
+		sf::Vector2f lastMove;
 };
 
