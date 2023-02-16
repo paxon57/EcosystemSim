@@ -12,13 +12,12 @@ class Creature
 		CreatureType type;
 
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
-		~Creature();
 		void update(float deltaTime);
 		void draw();
 
 	private:
 		int colliderIndex;
-		sf::Vector2f* pos;
+		sf::Vector2f pos;
 		sf::Vector2f lastMove;
 		PhysicsEngine& phys;
 };

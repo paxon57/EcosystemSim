@@ -9,7 +9,7 @@ class PhysicsEngine
 		int newCollider(sf::Vector2f _pos, float _radius = 50.f);
 		void removeCollider(int index);
 		void update(float dt, int subSteps = 1);
-		sf::Vector2f* getPosPointer(int index);
+		sf::Vector2f getPos(int index);
 		void move(int index, sf::Vector2f newPos);
 
 	private:

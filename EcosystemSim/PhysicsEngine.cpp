@@ -1,7 +1,8 @@
 #include "PhysicsEngine.h"
 
 PhysicsEngine::PhysicsEngine(float _size) :
-	size(_size)
+	size(_size),
+	colliders()
 {
 }
 
@@ -12,23 +13,23 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
 	for (int i = 0; i < 20000; i++)
 	{
 		// Check if free
-		if (colliders[i].index == -1) {
+		if (colliders[i].idx == -1) {
 			index = i;
 
 			// Add collider
 			colliders[i] = Collider(_pos, _radius);
-			colliders[i].index = i;
+			colliders[i].idx = index;
+
 			int gridIndex = getGridIndexFromPos(_pos);
 			colliders[i].gridIdx = gridIndex;
 
 			// Add index to grid
-			grid[gridIndex].colliderIdx.push_back(i);
+			grid[gridIndex].colliderIdx.push_back(index);
 
-			break;
+			return index;
 		}
 	}
-
-	return index;
+	return -1;
 }
 
 void PhysicsEngine::removeCollider(int index)
@@ -37,7 +38,7 @@ void PhysicsEngine::removeCollider(int index)
 	int gridIndex = colliders[index].gridIdx;
 	grid[gridIndex].remove(index);
 	// Disable from main array
-	colliders[index].index = -1;
+	colliders[index].idx = -1;
 }
 
 void PhysicsEngine::update(float dt, int subSteps)
@@ -49,9 +50,9 @@ void PhysicsEngine::update(float dt, int subSteps)
 	}
 }
 
-sf::Vector2f* PhysicsEngine::getPosPointer(int index)
+sf::Vector2f PhysicsEngine::getPos(int index)
 {
-	return &colliders[index].pos;
+	return colliders[index].pos;
 }
 
 void PhysicsEngine::move(int index, sf::Vector2f newPos)
@@ -108,7 +109,7 @@ void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
 			if (index1 == index2) continue;
 			// Check collision
 			if (collide(index1, index2)) {
-				
+				solveCollision(index1, index2);
 			}
 		}
 	}
@@ -127,7 +128,7 @@ void PhysicsEngine::solveCollision(int _index, int _otherIndex)
 	float sum = colliders[_index].radius + colliders[_otherIndex].radius;
 	sf::Vector2f diff = colliders[_index].pos - colliders[_otherIndex].pos;
 	float dist = sqrt(diff.x * diff.x + diff.y * diff.y);
-	sf::Vector2f normalized = sf::Vector2f(diff.x / dist, diff.y / dist);
+	sf::Vector2f normalized = sf::Vector2f(-diff.x / dist, diff.y / dist);
 
 	float intersection = sum - dist;
 	colliders[_index].pos += normalized * (intersection / 2.f);

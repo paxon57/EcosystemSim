@@ -9,6 +9,6 @@ class Collider
 		float radius;
 		sf::Vector2f pos;
 		int gridIdx;
-		int index;
+		int idx;
 };
 

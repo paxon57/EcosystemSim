@@ -61,9 +61,8 @@ int main()
         float x = (rand() / (float)RAND_MAX) * 12800.f;
         float y = (rand() / (float)RAND_MAX) * 12800.f;
         bool type = round(rand() / (float)RAND_MAX);
-        if (type) creatures.push_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
-        else creatures.push_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
-        
+        if (type) creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
+        else creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
     }
     /////////////////////////////////////////
     

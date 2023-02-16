@@ -4,4 +4,4 @@ Collider::Collider(sf::Vector2f _pos, float _radius) :
 	radius(_radius),
 	gridIdx(0),
 	pos(_pos),
-	index(-1) {}
+	idx(-1) {}

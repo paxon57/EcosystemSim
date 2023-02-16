@@ -7,12 +7,13 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	phys(_phys)
 {
 	colliderIndex = phys.newCollider(_pos);
-	pos = phys.getPosPointer(colliderIndex);
 }
 
 void Creature::update(float deltaTime) {
+	// Get current position from Physics Engine
+	pos = phys.getPos(colliderIndex);
 	// Move 1m/s down
-	phys.move(colliderIndex, *pos + sf::Vector2f(0, 100.f) * deltaTime);
+	phys.move(colliderIndex, pos + sf::Vector2f(0, 100.f) * deltaTime);
 }
 
 void Creature::draw()
@@ -24,12 +25,7 @@ void Creature::draw()
 	else
 		body = &predatorBody;
 	// Set body pos
-	(*body).setPosition(*pos);
+	(*body).setPosition(phys.getPos(colliderIndex));
 	// Draw
 	window.draw(*body);
-}
-
-Creature::~Creature()
-{
-	phys.removeCollider(colliderIndex);
 }
