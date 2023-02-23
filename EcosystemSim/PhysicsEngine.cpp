@@ -59,12 +59,7 @@ void PhysicsEngine::move(int index, sf::Vector2f newPos)
 {
 	colliders[index].pos = newPos;
 	keepInBounds(index);
-	int newGridIndex = getGridIndexFromPos(colliders[index].pos);
-	if (newGridIndex != colliders[index].gridIdx) {
-		grid[colliders[index].gridIdx].remove(index);
-		grid[newGridIndex].colliderIdx.push_back(index);
-		colliders[index].gridIdx = newGridIndex;
-	}
+	recalculateIndex(index);
 }
 
 int PhysicsEngine::getGridIndexFromPos(sf::Vector2f _pos)
@@ -82,39 +77,44 @@ int PhysicsEngine::getGridIndex(int _x, int _y)
 
 void PhysicsEngine::physUpdate(float dt)
 {
-	// Loop through grid without edges
-	for (int x = 1; x < 127; x++)
+	//physLoop(0, 127, dt);
+	// Threading
+	int dx = floor(128 / numThreads);
+
+	for (int i = 0; i < numThreads; i++)
 	{
-		for (int y = 1; y < 127; y++)
+		int x1 = dx * i;
+		int x2;
+		if (i == numThreads - 1) x2 = 128;
+		else x2 = dx * (i + 1);
+		//printf("Scheduling thread %i with values %i, %i\n", i, x1, x2);
+		futures.push_back(std::async([this, x1, x2, dt] { physLoop(x1, x2, dt); }));
+	}
+
+	futures.clear();
+}
+
+void PhysicsEngine::physLoop(int x1, int x2, float dt)
+{
+	// Loop through grid
+	for (int x = x1; x < x2; x++)
+	{
+		for (int y = 0; y < 128; y++)
 		{
 			int cellIndex = getGridIndex(x, y);
 			// Loop through neighbours
 			for (int dx = -1; dx <= 1; dx++)
 			{
+				if (x + dx < 0 || x + dx >= 128) continue;
 				for (int dy = -1; dy <= 1; dy++)
 				{
+					if (y + dy < 0 || y + dy >= 128) continue;
 					int otherCellIndex = getGridIndex(x + dx, y + dy);
 					checkCellCollisions(cellIndex, otherCellIndex);
 				}
 			}
 		}
 	}
-
-	// DEBUG //////////////////////////////
-	int count = 0;
-	for (int x = 0; x < 128; x++)
-	{
-		for (int y = 0; y < 128; y++)
-		{
-			int cellIndex = getGridIndex(x, y);
-			for (int index1 : grid[cellIndex].colliderIdx) {
-				count++;
-				printf("Found in index: %i\n", cellIndex);
-			}
-		}
-	}
-	printf("Count: %i\n");
-	/////////////////////////////////////
 }
 
 void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
@@ -124,9 +124,7 @@ void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
 			// Skip if same object
 			if (index1 == index2) continue;
 			// Check collision
-			printf("CHECK\n");
 			if (collide(index1, index2)) {
-				printf("PASS\n");
 				solveCollision(index1, index2);
 			}
 		}
@@ -151,15 +149,14 @@ void PhysicsEngine::solveCollision(int _index, int _otherIndex)
 
 	float intersection = sum - dist;
 
-	printf("-----------------\nPos 1: %f, %f\n", colliders[_index].pos.x, colliders[_index].pos.y);
-	printf("Pos 2: %f, %f\n", colliders[_otherIndex].pos.x, colliders[_otherIndex].pos.y);
-	printf("Diff: %f, %f\n", diff.x, diff.y);
-
 	colliders[_index].pos += normalized * (intersection / 2.f);
 	colliders[_otherIndex].pos -= normalized * (intersection / 2.f);
 
 	keepInBounds(_index);
 	keepInBounds(_otherIndex);
+
+	//recalculateIndex(_index);
+	//recalculateIndex(_otherIndex);
 }
 
 void PhysicsEngine::keepInBounds(int _index)
@@ -168,4 +165,14 @@ void PhysicsEngine::keepInBounds(int _index)
 	if (colliders[_index].pos.y < colliders[_index].radius) colliders[_index].pos.y = colliders[_index].radius;
 	if (colliders[_index].pos.x > size - colliders[_index].radius) colliders[_index].pos.x = size - colliders[_index].radius;
 	if (colliders[_index].pos.y > size - colliders[_index].radius) colliders[_index].pos.y = size - colliders[_index].radius;
+}
+
+void PhysicsEngine::recalculateIndex(int _index)
+{
+	int newGridIndex = getGridIndexFromPos(colliders[_index].pos);
+	if (newGridIndex != colliders[_index].gridIdx) {
+		grid[colliders[_index].gridIdx].remove(_index);
+		grid[newGridIndex].colliderIdx.push_back(_index);
+		colliders[_index].gridIdx = newGridIndex;
+	}
 }
