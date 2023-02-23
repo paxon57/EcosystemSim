@@ -3,6 +3,5 @@
 //#include "PhysicsEngine.h"
 
 extern sf::RenderWindow window;
-extern sf::CircleShape preyBody;
-extern sf::CircleShape predatorBody;
-//extern PhysicsEngine phys;
+extern sf::VertexArray creaturesQuads;
+extern sf::Texture creatureTexture;

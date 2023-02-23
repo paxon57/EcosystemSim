@@ -8,13 +8,14 @@
 
 sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(512, 512), "Ecosystem Simulation", sf::Style::Close | sf::Style::Resize);
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
-sf::CircleShape preyBody = sf::CircleShape(50.f);
-sf::CircleShape predatorBody = sf::CircleShape(50.f);
 sf::Clock frameTimeClock;
 
 World world(12800.f);
 PhysicsEngine phys(12800.f);
 CameraController cam(view);
+
+sf::VertexArray creaturesQuads(sf::Quads, 4 * 5000);
+sf::Texture creatureTexture;
 
 void eventHandler(sf::RenderWindow& window) {
     sf::Event evnt;
@@ -33,28 +34,16 @@ void eventHandler(sf::RenderWindow& window) {
     }
 }
 
-void globalGraphicsInit() {
-    preyBody.setFillColor(sf::Color(46, 204, 113));
-    preyBody.setOutlineColor(sf::Color(44, 62, 80));
-    preyBody.setOutlineThickness(-5.f);
-    preyBody.setOrigin(sf::Vector2f(50.f, 50.f));
-
-    predatorBody.setFillColor(sf::Color(231, 76, 60));
-    predatorBody.setOutlineColor(sf::Color(44, 62, 80));
-    predatorBody.setOutlineThickness(-5.f);
-    predatorBody.setOrigin(sf::Vector2f(50.f, 50.f));
-}
-
 int main()
 {
-    // Init graphics for creatures
-    globalGraphicsInit();
-    
+    // Load textures
+    if (!creatureTexture.loadFromFile("creature.png")) return 0;
+
     // Random seed
     srand(time(NULL));
 
     // Test //////////////////////////////////
-    const int numCreatures = 10000;
+    const int numCreatures = 5000;
     std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {
@@ -74,6 +63,7 @@ int main()
         eventHandler(window);
         window.clear(sf::Color(127, 140, 141));
         window.setView(view);
+        // TODO??? Clear creaturesQuad
         
         view.setSize(sf::Vector2f(window.getSize()));
         
@@ -97,7 +87,7 @@ int main()
             creature.draw();
         }
         ////////////////////////////////////
-
+        window.draw(creaturesQuads, &creatureTexture);
         window.display();
     }
 
