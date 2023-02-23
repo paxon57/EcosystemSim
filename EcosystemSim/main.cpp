@@ -54,12 +54,12 @@ int main()
     srand(time(NULL));
 
     // Test //////////////////////////////////
-    const int numCreatures = 3000;
+    const int numCreatures = 10;
     std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {
-        float x = (rand() / (float)RAND_MAX) * 12800.f;
-        float y = (rand() / (float)RAND_MAX) * 12800.f;
+        float x = (rand() / (float)RAND_MAX) * 128.f;
+        float y = (rand() / (float)RAND_MAX) * 2800.f + 10000.f;
         bool type = round(rand() / (float)RAND_MAX);
         if (type) creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
         else creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));

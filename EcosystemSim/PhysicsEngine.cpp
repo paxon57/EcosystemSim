@@ -99,6 +99,22 @@ void PhysicsEngine::physUpdate(float dt)
 			}
 		}
 	}
+
+	// DEBUG //////////////////////////////
+	int count = 0;
+	for (int x = 0; x < 128; x++)
+	{
+		for (int y = 0; y < 128; y++)
+		{
+			int cellIndex = getGridIndex(x, y);
+			for (int index1 : grid[cellIndex].colliderIdx) {
+				count++;
+				printf("Found in index: %i\n", cellIndex);
+			}
+		}
+	}
+	printf("Count: %i\n");
+	/////////////////////////////////////
 }
 
 void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
@@ -108,7 +124,9 @@ void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
 			// Skip if same object
 			if (index1 == index2) continue;
 			// Check collision
+			printf("CHECK\n");
 			if (collide(index1, index2)) {
+				printf("PASS\n");
 				solveCollision(index1, index2);
 			}
 		}
@@ -127,10 +145,16 @@ void PhysicsEngine::solveCollision(int _index, int _otherIndex)
 {
 	float sum = colliders[_index].radius + colliders[_otherIndex].radius;
 	sf::Vector2f diff = colliders[_index].pos - colliders[_otherIndex].pos;
+
 	float dist = sqrt(diff.x * diff.x + diff.y * diff.y);
-	sf::Vector2f normalized = sf::Vector2f(-diff.x / dist, diff.y / dist);
+	sf::Vector2f normalized = sf::Vector2f(diff.x / dist, diff.y / dist);
 
 	float intersection = sum - dist;
+
+	printf("-----------------\nPos 1: %f, %f\n", colliders[_index].pos.x, colliders[_index].pos.y);
+	printf("Pos 2: %f, %f\n", colliders[_otherIndex].pos.x, colliders[_otherIndex].pos.y);
+	printf("Diff: %f, %f\n", diff.x, diff.y);
+
 	colliders[_index].pos += normalized * (intersection / 2.f);
 	colliders[_otherIndex].pos -= normalized * (intersection / 2.f);
 
