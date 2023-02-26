@@ -4,7 +4,8 @@
 Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	colliderIndex(-1),
 	type(_type),
-	phys(_phys)
+	phys(_phys),
+	po(PhysicsObject(phys, colliderIndex, _pos))
 {
 	colliderIndex = phys.newCollider(_pos);
 
@@ -23,10 +24,8 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 }
 
 void Creature::update(float deltaTime) {
-	// Get current position from Physics Engine
-	pos = phys.getPos(colliderIndex);
-	// Move 1m/s down
-	phys.move(colliderIndex, pos + sf::Vector2f(0, 100.f) * deltaTime);
+	po.addForce(sf::Vector2f(0.f, 9.81f) * 100.f);
+	po.update(deltaTime);
 }
 
 void Creature::draw()
@@ -37,4 +36,8 @@ void Creature::draw()
 	creaturesQuads[colliderIndex * 4 + 1].position = pos + sf::Vector2f(50.f, -50.f);
 	creaturesQuads[colliderIndex * 4 + 2].position = pos + sf::Vector2f(50.f, 50.f);
 	creaturesQuads[colliderIndex * 4 + 3].position = pos + sf::Vector2f(-50.f, 50.f);
+}
+
+void Creature::addForce(sf::Vector2f force)
+{
 }

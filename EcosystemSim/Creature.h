@@ -3,6 +3,7 @@
 #include "global.h"
 #include "Collider.h"
 #include "PhysicsEngine.h"
+#include "PhysicsObject.h"
 
 enum CreatureType { Prey, Predator};
 
@@ -20,5 +21,8 @@ class Creature
 		sf::Vector2f pos;
 		sf::Vector2f lastMove;
 		PhysicsEngine& phys;
+		PhysicsObject po;
+
+		void addForce(sf::Vector2f force);
 };
 
