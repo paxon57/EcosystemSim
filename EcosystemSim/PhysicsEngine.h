@@ -2,7 +2,7 @@
 #include <future>
 #include <SFML/Graphics.hpp>
 #include "PhysGridCell.h"
-const int numThreads = 1;
+const int numThreads = 4;
 
 class PhysicsEngine
 {
@@ -13,6 +13,7 @@ class PhysicsEngine
 		void update(float dt, int subSteps = 1);
 		sf::Vector2f getPos(int index);
 		void move(int index, sf::Vector2f newPos);
+		void addForce(int colliderIndex, sf::Vector2f force);
 
 	private:
 		float size;

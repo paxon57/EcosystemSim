@@ -10,5 +10,13 @@ class Collider
 		sf::Vector2f pos;
 		int gridIdx;
 		int idx;
+
+		void addForce(sf::Vector2f force);
+
+		void update(float dt);
+
+	private:
+		sf::Vector2f lastPos;
+		sf::Vector2f acceleration;
 };
 

@@ -11,7 +11,7 @@ PhysicsObject::PhysicsObject(PhysicsEngine& _phys, int _colliderIndex, sf::Vecto
 void PhysicsObject::addForce(sf::Vector2f force)
 {
 	acceleration += force;
-	printf("TEST: %f, %f\n", lastPos.x, lastPos.y);
+	//printf("TEST: %f, %f\n", lastPos.x, lastPos.y);
 }
 
 void PhysicsObject::update(float dt)

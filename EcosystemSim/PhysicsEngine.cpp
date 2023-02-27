@@ -43,6 +43,17 @@ void PhysicsEngine::removeCollider(int index)
 
 void PhysicsEngine::update(float dt, int subSteps)
 {
+	// Update all colliders
+	for (int i = 0; i < 20000; i++)
+	{
+		if (colliders[i].idx == -1) break;
+
+		colliders[i].update(dt);
+		keepInBounds(i);
+		recalculateIndex(i);
+	}
+
+	// Collision handling
 	float subDt = dt / subSteps;
 	for (int i = 0; i < subSteps; i++)
 	{
@@ -60,6 +71,11 @@ void PhysicsEngine::move(int index, sf::Vector2f newPos)
 	colliders[index].pos = newPos;
 	keepInBounds(index);
 	recalculateIndex(index);
+}
+
+void PhysicsEngine::addForce(int colliderIndex, sf::Vector2f force)
+{
+	colliders[colliderIndex].addForce(force);
 }
 
 int PhysicsEngine::getGridIndexFromPos(sf::Vector2f _pos)

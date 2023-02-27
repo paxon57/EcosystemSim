@@ -6,7 +6,7 @@
 #include "Creature.h"
 #include "PhysicsEngine.h"
 
-sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(512, 512), "Ecosystem Simulation", sf::Style::Close | sf::Style::Resize);
+sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(1024, 1024), "Ecosystem Simulation", sf::Style::Close | sf::Style::Resize);
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
 sf::Clock frameTimeClock;
 
@@ -43,7 +43,7 @@ int main()
     srand(time(NULL));
 
     // Test //////////////////////////////////
-    const int numCreatures = 1;
+    const int numCreatures = 2000;
     std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {

@@ -4,10 +4,8 @@
 Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	colliderIndex(_phys.newCollider(_pos)),
 	type(_type),
-	phys(_phys),
-	po(_phys, colliderIndex, _pos)
+	phys(_phys)
 {
-
 	if (type == CreatureType::Prey) {
 		creaturesQuads[colliderIndex * 4].texCoords = sf::Vector2f(0.f, 0.f);
 		creaturesQuads[colliderIndex * 4 + 1].texCoords = sf::Vector2f(128.f, 0.f);
@@ -23,8 +21,7 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 }
 
 void Creature::update(float deltaTime) {
-	po.addForce(sf::Vector2f(0.f, -9.81f));
-	po.update(deltaTime);
+	phys.addForce(colliderIndex, sf::Vector2f(0.f, 9.81f) * 10.f);
 }
 
 void Creature::draw()

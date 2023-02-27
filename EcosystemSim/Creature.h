@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "global.h"
 #include "Collider.h"
-#include "PhysicsObject.h"
+#include "PhysicsEngine.h"
 
 enum CreatureType { Prey, Predator};
 
@@ -19,6 +19,6 @@ class Creature
 		int colliderIndex;
 		sf::Vector2f pos;
 		PhysicsEngine& phys;
-		PhysicsObject po;
+		
 };
 

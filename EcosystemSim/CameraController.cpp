@@ -4,6 +4,7 @@ CameraController::CameraController(sf::View& _view):
 	view(_view) 
 {
 	view.zoom(zoom);
+	view.setCenter(sf::Vector2f(6400.f, 6400.f));
 }
 
 void CameraController::update(float deltaTime)
