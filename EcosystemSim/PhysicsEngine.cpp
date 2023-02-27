@@ -26,6 +26,9 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
 			// Add index to grid
 			grid[gridIndex].colliderIdx.push_back(index);
 
+			// DEBUG
+			colliders[i].radius = 50.f + (rand() / (float)RAND_MAX) * 1.f - 0.5f;
+
 			return index;
 		}
 	}

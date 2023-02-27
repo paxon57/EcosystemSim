@@ -21,7 +21,7 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 }
 
 void Creature::update(float deltaTime) {
-	phys.addForce(colliderIndex, sf::Vector2f(0.f, 9.81f) * 10.f);
+	phys.addForce(colliderIndex, sf::Vector2f(0.f, 2.5f) * 100.f);
 }
 
 void Creature::draw()

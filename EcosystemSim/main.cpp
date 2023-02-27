@@ -43,7 +43,7 @@ int main()
     srand(time(NULL));
 
     // Test //////////////////////////////////
-    const int numCreatures = 2000;
+    const int numCreatures = 3000;
     std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {
@@ -81,7 +81,7 @@ int main()
             creature.update(deltaTime);
         }
 
-        phys.update(deltaTime);
+        phys.update(deltaTime, 1);
 
         for (Creature creature : creatures) {
             creature.draw();
