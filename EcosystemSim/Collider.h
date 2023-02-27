@@ -7,16 +7,21 @@ class Collider
 		Collider(sf::Vector2f _pos = sf::Vector2f(), float _radius = 50.f);
 
 		float radius;
-		sf::Vector2f pos;
+		float maxSpeed = 100.f;
 		int gridIdx;
 		int idx;
 
-		void addForce(sf::Vector2f force);
+		sf::Vector2f pos;
 
+		void addForce(sf::Vector2f force);
 		void update(float dt);
 
 	private:
+		float lastdt;
 		sf::Vector2f lastPos;
+		sf::Vector2f velocity;
 		sf::Vector2f acceleration;
+
+		void addDrag(float dt);
 };
 

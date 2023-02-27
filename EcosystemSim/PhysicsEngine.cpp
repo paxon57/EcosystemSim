@@ -20,14 +20,14 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
 			colliders[i] = Collider(_pos, _radius);
 			colliders[i].idx = index;
 
+			// Add imperfectinos
+			colliders[i].radius += (rand() / (float)RAND_MAX) - 0.5f;
+
 			int gridIndex = getGridIndexFromPos(_pos);
 			colliders[i].gridIdx = gridIndex;
 
 			// Add index to grid
 			grid[gridIndex].colliderIdx.push_back(index);
-
-			// DEBUG
-			colliders[i].radius = 50.f + (rand() / (float)RAND_MAX) * 1.f - 0.5f;
 
 			return index;
 		}
@@ -106,7 +106,6 @@ void PhysicsEngine::physUpdate(float dt)
 		int x2;
 		if (i == numThreads - 1) x2 = 128;
 		else x2 = dx * (i + 1);
-		//printf("Scheduling thread %i with values %i, %i\n", i, x1, x2);
 		futures.push_back(std::async([this, x1, x2, dt] { physLoop(x1, x2, dt); }));
 	}
 
@@ -115,6 +114,8 @@ void PhysicsEngine::physUpdate(float dt)
 
 void PhysicsEngine::physLoop(int x1, int x2, float dt)
 {
+	deltaTime = dt;
+
 	// Loop through grid
 	for (int x = x1; x < x2; x++)
 	{

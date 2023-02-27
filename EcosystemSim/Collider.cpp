@@ -14,16 +14,24 @@ void Collider::addForce(sf::Vector2f force)
 
 void Collider::update(float dt)
 {
-	// Get velocity
-	sf::Vector2f velocity = pos - lastPos;
-	//printf("Pos: %f, %f\n", pos.x, pos.y);
-	//printf("Last Pos: %f, %f\n", lastPos.x, lastPos.y);
-	//printf("Velocity: %f, %f\n", velocity.x, velocity.y);
+	// Update velocity
+	velocity = pos - lastPos;
+	// Add drag
+	addDrag(dt);
 	// Save current position
 	lastPos = pos;
-	//printf("Last Pos after: %f, %f\n----------------------------\n", lastPos.x, lastPos.y);
-	// Perform Verlet integration
-	pos = pos + velocity + acceleration * dt * dt;
+	// Perform time corrected Verlet integration
+	pos = pos + velocity * (dt/lastdt) + acceleration * ((dt + lastdt)/2.f) * dt;
+	// Save last dt
+	lastdt = dt;
 	// Reset acceleration
 	acceleration = sf::Vector2f(0.f, 0.f);
+}
+
+void Collider::addDrag(float dt)
+{
+	//sf::Vector2f force;
+	//float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
+	//force = velocity * (speed / (maxSpeed * dt)) * -1.f;
+	addForce(-velocity * 0.5f);
 }

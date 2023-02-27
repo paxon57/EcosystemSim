@@ -2,7 +2,7 @@
 #include <future>
 #include <SFML/Graphics.hpp>
 #include "PhysGridCell.h"
-const int numThreads = 4;
+const int numThreads = 24;
 
 class PhysicsEngine
 {
@@ -17,6 +17,7 @@ class PhysicsEngine
 
 	private:
 		float size;
+		float deltaTime;
 
 		Collider colliders[20000];
 		PhysGridCell grid[128*128];
