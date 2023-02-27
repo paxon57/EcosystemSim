@@ -14,7 +14,7 @@ World world(12800.f);
 PhysicsEngine phys(12800.f);
 CameraController cam(view);
 
-sf::VertexArray creaturesQuads(sf::Quads, 4 * 5000);
+sf::VertexArray creaturesQuads(sf::Quads, 4 * 20000);
 sf::Texture creatureTexture;
 
 void eventHandler(sf::RenderWindow& window) {
@@ -43,7 +43,7 @@ int main()
     srand(time(NULL));
 
     // Test //////////////////////////////////
-    const int numCreatures = 5000;
+    const int numCreatures = 1;
     std::vector<Creature> creatures;
     for (size_t i = 0; i < numCreatures; i++)
     {

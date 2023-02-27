@@ -10,11 +10,13 @@ class PhysicsObject
 
 		void update(float dt);
 
+		sf::Vector2f pos;
+		sf::Vector2f lastPos;
+
 	private:
 		int colliderIndex;
 
-		sf::Vector2f pos;
-		sf::Vector2f lastPos;
+		
 		sf::Vector2f acceleration;
 
 		PhysicsEngine& phys;
