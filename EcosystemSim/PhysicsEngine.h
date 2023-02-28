@@ -2,7 +2,7 @@
 #include <future>
 #include <SFML/Graphics.hpp>
 #include "PhysGridCell.h"
-const int numThreads = 24;
+const int numThreads = 4;
 
 class PhysicsEngine
 {

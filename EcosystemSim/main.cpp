@@ -42,8 +42,13 @@ int main()
     // Random seed
     srand(time(NULL));
 
+    // Framerate limit
+    int maxFPS = 60;
+    float frameTime = 1.f / maxFPS;;
+    window.setFramerateLimit(maxFPS);
+
     // Test //////////////////////////////////
-    const int numCreatures = 15000;
+    const int numCreatures = 2000;
     int creaturesLeft = numCreatures;
     float interval = 0.5f;
     float curInterval = interval;
@@ -95,7 +100,7 @@ int main()
             creature.update(deltaTime);
         }
 
-        phys.update(deltaTime, 1);
+        phys.update(frameTime, 1);
 
         for (Creature creature : creatures) {
             creature.draw();

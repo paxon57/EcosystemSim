@@ -33,5 +33,5 @@ void Collider::addDrag(float dt)
 	//sf::Vector2f force;
 	//float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
 	//force = velocity * (speed / (maxSpeed * dt)) * -1.f;
-	addForce(-velocity * 0.5f);
+	//addForce(-velocity * 0.5f);
 }

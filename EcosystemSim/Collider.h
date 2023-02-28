@@ -18,6 +18,7 @@ class Collider
 
 	private:
 		float lastdt;
+
 		sf::Vector2f lastPos;
 		sf::Vector2f velocity;
 		sf::Vector2f acceleration;
