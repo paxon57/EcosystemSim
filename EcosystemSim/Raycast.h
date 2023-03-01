@@ -1,18 +1,16 @@
 #pragma once
-#include "PhysicsEngine.h"
+#include <SFML/Graphics.hpp>
 
 class Raycast
 {
 	public:
-		Raycast(PhysicsEngine& _phys);
+		Raycast();
 
 		bool hit = false;
 		bool hitWorld = false;
 		int targetIndex = -1;
-		float distance;
-
-		void shoot(sf::Vector2f startPoint, sf::Vector2f endPoint);
+		float distance = 0.f;
 	private:
-		PhysicsEngine& phys;
+		
 };
 

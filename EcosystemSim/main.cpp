@@ -100,6 +100,15 @@ int main()
             creature.update(deltaTime);
         }
 
+        Raycast ray;
+        phys.raycast(0, ray, sf::Vector2f(4000.f, 10000.f), sf::Vector2f(7000.f, 10000.f));
+        printf("Hit: %d, Hit world: %d, Dist: %f\n", ray.hit, ray.hitWorld, ray.distance);
+        sf::VertexArray line(sf::Lines, 2);
+        line[0].position = sf::Vector2f(4000.f, 10000.f);
+        line[0].color = sf::Color::Red;
+        line[1].position = sf::Vector2f(4000.f + ray.distance, 10000.f);
+        line[1].color = sf::Color::Red;
+
         phys.update(fixeddt, 4);
 
         for (Creature creature : creatures) {
@@ -107,6 +116,7 @@ int main()
         }
         ////////////////////////////////////
         window.draw(creaturesQuads, &creatureTexture);
+        window.draw(line);
         window.display();
     }
 

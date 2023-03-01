@@ -1,11 +1,5 @@
 #include "Raycast.h"
 
-Raycast::Raycast(PhysicsEngine& _phys):
-	phys(_phys)
+Raycast::Raycast()
 {
-}
-
-void Raycast::shoot(sf::Vector2f startPoint, sf::Vector2f endPoint)
-{
-
 }
