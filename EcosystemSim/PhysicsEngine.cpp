@@ -81,6 +81,111 @@ void PhysicsEngine::addForce(int colliderIndex, sf::Vector2f force)
 	colliders[colliderIndex].addForce(force);
 }
 
+void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, sf::Vector2f end)
+{
+	// Reset ray
+	ray.targetIndex = -1;
+	ray.hit = false;
+	ray.hitWorld = false;
+	// Vector of colliders
+	std::vector<int> found;
+	// Get boundaries
+	float minX, minY, maxX, maxY;
+	minX = (start.x < end.x) ? start.x : end.x;
+	maxX = (start.x > end.x) ? start.x : end.x;
+	minY = (start.y < end.y) ? start.y : end.y;
+	maxY = (start.y > end.y) ? start.y : end.y;
+
+	// Line equation: y = mx + b
+	// Slope
+	float m = (end.y - start.y) / (end.x - start.x);
+	// B offset
+	float b = start.y - (start.x * m);
+
+	// Find intersections with grid along X
+	for (int i = floor(minX / 100.f); i <= ceil(maxX / 100.f); i++)
+	{
+		// Calculate y value at the grid edge
+		float y = m * (i * 100.f) + b;
+		// Add left/right cell contents
+		int index = getGridIndexFromPos(sf::Vector2f(i * 100.f - 1.f, y));
+		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		index = getGridIndexFromPos(sf::Vector2f(i * 100.f + 1.f, y));
+		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+	}
+
+	// Find intersections with grid along Y
+	for (int i = floor(minY / 100.f); i <= ceil(maxY / 100.f); i++)
+	{
+		// Calculate x value at the grid edge
+		float x = ((i * 100.f) - b)/m;
+		// Add left/right cell contents
+		int index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f - 1.f));
+		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f + 1.f));
+		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+	}
+
+	// Find closest intersection
+	float closestDistSqr = 9999999999999.f;
+	for (int idx : found) {
+		// Prevent self detection
+		if (idx == senderIndex) continue;
+
+		// Check for distance from line to the collider centre
+		float d = abs(m * colliders[idx].pos.x - colliders[idx].pos.y + b) / sqrt(m * m + 1);
+		// Check for intersection
+		if (d < colliders[idx].radius) {
+			sf::Vector2f diff = colliders[idx].pos - start;
+			float distSqr = diff.x * diff.x + diff.y * diff.y;
+			if (distSqr < closestDistSqr) {
+				closestDistSqr = distSqr;
+				ray.hit = true;
+				ray.targetIndex = idx;
+				ray.distance = sqrt(distSqr);
+			}
+		}
+	}
+
+	// Check for world hit if not colliders were hit
+	if (!ray.hit) {
+		sf::Vector2f hitPos = end;
+		if (minX < 0.f) {
+			ray.hitWorld = true;
+			hitPos.x = 0.f;
+			hitPos.y = b;
+			sf::Vector2f diff = hitPos - start;
+			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+		}
+		else if (maxX > 12800.f) {
+			ray.hitWorld = true;
+			hitPos.x = 12800.f;
+			hitPos.y = m * 12800.f + b;
+			sf::Vector2f diff = hitPos - start;
+			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+		}
+		else if (minY < 0.f) {
+			ray.hitWorld = true;
+			hitPos.y = 0.f;
+			hitPos.x = (-b) / m;
+			sf::Vector2f diff = hitPos - start;
+			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+		}
+		else if (maxY > 12800.f) {
+			ray.hitWorld = true;
+			hitPos.y = 12800.f;
+			hitPos.x = (12800.f - b) / m;
+			sf::Vector2f diff = hitPos - start;
+			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+		}
+	}
+	// Set distance if nothing hit
+	if (!ray.hit && !ray.hitWorld) {
+		sf::Vector2f diff = end - start;
+		ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+	}
+}
+
 int PhysicsEngine::getGridIndexFromPos(sf::Vector2f _pos)
 {
 	int x = floorf((int)(_pos.x / 100.f) % 128);

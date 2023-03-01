@@ -20,18 +20,13 @@ void Collider::update(float dt)
 	addDrag(dt);
 	// Save current position
 	lastPos = pos;
-	// Perform time corrected Verlet integration
-	pos = pos + velocity * (dt/lastdt) + acceleration * ((dt + lastdt)/2.f) * dt;
-	// Save last dt
-	lastdt = dt;
+	// Perform Verlet integration
+	pos = pos + velocity + acceleration * dt * dt;
 	// Reset acceleration
 	acceleration = sf::Vector2f(0.f, 0.f);
 }
 
 void Collider::addDrag(float dt)
 {
-	//sf::Vector2f force;
-	//float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
-	//force = velocity * (speed / (maxSpeed * dt)) * -1.f;
-	//addForce(-velocity * 0.5f);
+	addForce(-0.5f * sf::Vector2f(velocity.x * velocity.x, velocity.y * velocity.y) * drag);
 }

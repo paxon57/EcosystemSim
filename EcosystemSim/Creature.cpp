@@ -6,6 +6,8 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	type(_type),
 	phys(_phys)
 {
+	phys.addForce(colliderIndex, sf::Vector2f(10.f, 0.f) * 100.f * 60.f);
+
 	if (type == CreatureType::Prey) {
 		creaturesQuads[colliderIndex * 4].texCoords = sf::Vector2f(0.f, 0.f);
 		creaturesQuads[colliderIndex * 4 + 1].texCoords = sf::Vector2f(128.f, 0.f);

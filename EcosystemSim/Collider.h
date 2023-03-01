@@ -8,6 +8,7 @@ class Collider
 
 		float radius;
 		float maxSpeed = 100.f;
+		float drag = 0.1;
 		int gridIdx;
 		int idx;
 
@@ -17,8 +18,6 @@ class Collider
 		void update(float dt);
 
 	private:
-		float lastdt;
-
 		sf::Vector2f lastPos;
 		sf::Vector2f velocity;
 		sf::Vector2f acceleration;

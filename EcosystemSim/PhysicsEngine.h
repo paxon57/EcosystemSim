@@ -2,7 +2,9 @@
 #include <future>
 #include <SFML/Graphics.hpp>
 #include "PhysGridCell.h"
-const int numThreads = 4;
+#include "Raycast.h"
+
+const int numThreads = 24;
 
 class PhysicsEngine
 {
@@ -14,6 +16,7 @@ class PhysicsEngine
 		sf::Vector2f getPos(int index);
 		void move(int index, sf::Vector2f newPos);
 		void addForce(int colliderIndex, sf::Vector2f force);
+		void raycast(int senderIndex, Raycast& ray, sf::Vector2f start, sf::Vector2f end);
 
 	private:
 		float size;

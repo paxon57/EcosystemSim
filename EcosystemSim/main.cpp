@@ -44,13 +44,13 @@ int main()
 
     // Framerate limit
     int maxFPS = 60;
-    float frameTime = 1.f / maxFPS;;
+    float fixeddt = 1.f / (float)maxFPS;;
     window.setFramerateLimit(maxFPS);
 
     // Test //////////////////////////////////
-    const int numCreatures = 2000;
+    const int numCreatures = 5000;
     int creaturesLeft = numCreatures;
-    float interval = 0.5f;
+    float interval = 0.1f;
     float curInterval = interval;
     std::vector<Creature> creatures;
     /////////////////////////////////////////
@@ -77,10 +77,10 @@ int main()
         cam.update(deltaTime);
         world.draw();
         // Test ///////////////////////////////
-        curInterval -= deltaTime;
+        curInterval -= fixeddt;
         int toSpawn = 0.f;
         if (curInterval < 0.f) {
-            toSpawn = 100;
+            toSpawn = 5;
             curInterval = interval;
         }
         if (toSpawn > creaturesLeft) toSpawn = creaturesLeft;
@@ -88,9 +88,9 @@ int main()
 
         for (size_t i = 0; i < toSpawn; i++)
         {
-            float x = 1400.f + i * 100.f;
+            float x = 1400.f;
             //float y = 1400.f + (rand() / (float)RAND_MAX) * 5000.f;
-            float y = 1000.f;
+            float y = 1000.f + i * 125.f;
             bool type = round(rand() / (float)RAND_MAX);
             if (type) creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
             else creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
@@ -100,7 +100,7 @@ int main()
             creature.update(deltaTime);
         }
 
-        phys.update(frameTime, 1);
+        phys.update(fixeddt, 4);
 
         for (Creature creature : creatures) {
             creature.draw();
