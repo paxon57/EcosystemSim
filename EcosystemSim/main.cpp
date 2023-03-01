@@ -71,7 +71,6 @@ int main()
         frame += 1;
         float deltaTime = frameTimeClock.getElapsedTime().asSeconds();
         frameTimeClock.restart();
-        printf("Frame: %lu | Frametime: %fms | FPS: %f\n", frame, deltaTime*1000.f, 1.f/deltaTime);
 
         // Updates
         cam.update(deltaTime);
@@ -102,7 +101,6 @@ int main()
 
         Raycast ray;
         phys.raycast(0, ray, sf::Vector2f(4000.f, 10000.f), sf::Vector2f(7000.f, 10000.f));
-        printf("Hit: %d, Hit world: %d, Dist: %f\n", ray.hit, ray.hitWorld, ray.distance);
         sf::VertexArray line(sf::Lines, 2);
         line[0].position = sf::Vector2f(4000.f, 10000.f);
         line[0].color = sf::Color::Red;
@@ -118,6 +116,12 @@ int main()
         window.draw(creaturesQuads, &creatureTexture);
         window.draw(line);
         window.display();
+
+        // Print to console
+        //printf("Frame: %lu | Frametime: %fms | FPS: %f\r", frame, deltaTime * 1000.f, 1.f / deltaTime);
+        std::cout << "\rFrame: " << frame << "\tFrame time: " << deltaTime * 1000.f <<
+            "ms \tFPS: " << (1.f / deltaTime) << std::flush;
+        printf("\tHit: %d, Hit world: %d, Dist: %f", ray.hit, ray.hitWorld, ray.distance);
     }
 
     return 0;
