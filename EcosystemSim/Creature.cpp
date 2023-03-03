@@ -6,10 +6,11 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	phys(_phys),
 	rotation(0.f)
 {
-	// Handle global
-	amountOfCreatures++;
-
-	phys.addForce(colliderIndex, sf::Vector2f(10.f, 0.f) * 100.f * 60.f);
+	// Simulation data
+	if (type == CreatureType::Prey)
+		sim.preyAmount++;
+	else
+		sim.predatorAmount++;
 	
 	// Setup rays
 	for (size_t i = 0; i < rayAmount; i++)
@@ -36,9 +37,6 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 }
 
 void Creature::update(float deltaTime) {
-	// Apply gravity
-	phys.addForce(colliderIndex, sf::Vector2f(0.f, 9.81f) * 100.f);
-
 	// Cast rays
 	for (int i = 0; i < rayAmount; i++)
 	{
