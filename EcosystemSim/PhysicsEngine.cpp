@@ -87,9 +87,6 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 	ray.targetIndex = -1;
 	ray.hit = false;
 	ray.hitWorld = false;
-	// Vector of colliders
-	int found[100];
-	int foundIndex = 0;
 	// Get boundaries
 	float minX, minY, maxX, maxY;
 	minX = (start.x < end.x) ? start.x : end.x;
@@ -103,66 +100,48 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 	// B offset
 	float b = start.y - (start.x * m);
 
-	// Find intersections with grid along X
-	for (int i = floor(minX / 100.f); i <= ceil(maxX / 100.f); i++)
-	{
-		// Calculate y value at the grid edge
-		float y = m * (i * 100.f) + b;
-		// Add left/right cell contents
-		int index = getGridIndexFromPos(sf::Vector2f(i * 100.f - 1.f, y));
-		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
-			found[foundIndex] = idx;
-			foundIndex++;
-		}
-		index = getGridIndexFromPos(sf::Vector2f(i * 100.f + 1.f, y));
-		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
-			found[foundIndex] = idx;
-			foundIndex++;
-		}
-	}
+	// Get grid XY limits
+	int minXint = floor(minX / 100.f);
+	int minYint = floor(minY / 100.f);
+	int maxXint = floor(maxX / 100.f);
+	int maxYint = floor(maxY / 100.f);
 
-	// Find intersections with grid along Y
-	for (int i = floor(minY / 100.f); i <= ceil(maxY / 100.f); i++)
-	{
-		// Calculate x value at the grid edge
-		float x = ((i * 100.f) - b)/m;
-		// Add left/right cell contents
-		int index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f - 1.f));
-		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
-			found[foundIndex] = idx;
-			foundIndex++;
-		}
-		index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f + 1.f));
-		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
-			found[foundIndex] = idx;
-			foundIndex++;
-		}
-	}
-
-	// Find closest intersection
+	// Loop through relevant part of the grid and find closest intersection
 	float closestDistSqr = 9999999999999.f;
-	for (int i = 0; i < foundIndex; i++) {
-		int idx = found[i];
+	for (int x = minXint; x <= maxXint; x++)
+	{
+		for (int y = minYint; y <= maxYint; y++)
+		{
+			int index = getGridIndex(x, y);
 
-		// Prevent self detection
-		if (idx == senderIndex) continue;
+			if (!indexIsValid(index)) continue;
 
-		// Check for distance from line to the collider centre
-		float d = abs(m * colliders[idx].pos.x - colliders[idx].pos.y + b) / sqrt(m * m + 1);
-		// Check for intersection
-		if (d < colliders[idx].radius) {
-			sf::Vector2f diff = colliders[idx].pos - start;
-			float distSqr = diff.x * diff.x + diff.y * diff.y;
-			if (distSqr < closestDistSqr) {
-				closestDistSqr = distSqr;
-				ray.hit = true;
-				ray.targetIndex = idx;
-				ray.distance = sqrt(distSqr);
+			for (int idx : grid[index].colliderIdx) {
+				// Prevent self detection
+				if (idx == senderIndex) continue;
+
+				// Calculate distance from line to the collider centre
+				//float d = abs(m * colliders[idx].pos.x - colliders[idx].pos.y + b) / sqrt(m * m + 1);
+				float dSqr = ((m * colliders[idx].pos.x - colliders[idx].pos.y + b) * (m * colliders[idx].pos.x - colliders[idx].pos.y + b))
+				/ (m * m + 1);
+				
+				// Check for intersection
+				//if (d < colliders[idx].radius) {
+				if (dSqr < colliders[idx].radius * colliders[idx].radius) {
+					sf::Vector2f diff = colliders[idx].pos - start;
+					float distSqr = diff.x * diff.x + diff.y * diff.y;
+					if (distSqr < closestDistSqr) {
+						closestDistSqr = distSqr;
+						ray.hit = true;
+						ray.targetIndex = idx;
+						ray.distance = sqrt(distSqr);
+					}
+				}
 			}
 		}
 	}
 
-	// Check for world hit if not colliders were hit
+	// Check for world hit if no colliders were hit
 	if (!ray.hit) {
 		sf::Vector2f hitPos = end;
 		if (minX < 0.f) {

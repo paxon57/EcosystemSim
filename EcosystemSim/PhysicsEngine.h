@@ -4,7 +4,7 @@
 #include "PhysGridCell.h"
 #include "Raycast.h"
 
-const int numThreads = 24;
+const int numThreads = 12;
 
 class PhysicsEngine
 {
