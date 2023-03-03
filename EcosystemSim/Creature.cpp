@@ -1,5 +1,4 @@
 #include "Creature.h"
-#include "global.h"
 
 Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	colliderIndex(_phys.newCollider(_pos, 50.f, _type)),
@@ -7,6 +6,9 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	phys(_phys),
 	rotation(0.f)
 {
+	// Handle global
+	amountOfCreatures++;
+
 	phys.addForce(colliderIndex, sf::Vector2f(10.f, 0.f) * 100.f * 60.f);
 	
 	// Setup rays
@@ -42,7 +44,7 @@ void Creature::update(float deltaTime) {
 	{
 		float ang = rotation + (i * rayAngDiff) - (fov / 2.f);
 		sf::Vector2f endPos = pos + sf::Vector2f(cos(ang), sin(ang)) * rayLength;
-		phys.raycast(colliderIndex, ray[i], pos, endPos);
+		//phys.raycast(colliderIndex, ray[i], pos, endPos);
 	}
 
 	//TEST

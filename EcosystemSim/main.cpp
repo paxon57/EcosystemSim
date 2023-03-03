@@ -12,6 +12,8 @@ sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(1024, 1024), "Ecosystem
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
 sf::Clock frameTimeClock;
 
+int amountOfCreatures = 0;
+
 World world(12800.f);
 PhysicsEngine phys(12800.f);
 CameraController cam(view);
@@ -55,7 +57,7 @@ int main()
     window.setFramerateLimit(maxFPS);
 
     // Test //////////////////////////////////
-    const int numCreatures = 10000;
+    const int numCreatures = 12000;
     int creaturesLeft = numCreatures;
     float interval = 0.1f;
     float curInterval = interval;
@@ -88,7 +90,7 @@ int main()
         curInterval -= fixeddt;
         int toSpawn = 0.f;
         if (curInterval < 0.f) {
-            toSpawn = 5;
+            toSpawn = 10;
             curInterval = interval;
         }
         if (toSpawn > creaturesLeft) toSpawn = creaturesLeft;
@@ -116,15 +118,15 @@ int main()
 
         // ImGui Test
         ImGui::Begin("Information");
-        ImGui::Text("Test!");
+        ImGui::Value("FPS", 1.f/deltaTime);
+        ImGui::Value("Frame time (ms)", deltaTime * 1000.f);
+        ImGui::Value("Simspeed", fixeddt / deltaTime);
+        ImGui::Value("Creatures", amountOfCreatures);
         ImGui::End();
 
         window.draw(creaturesQuads, &creatureTexture);
         ImGui::SFML::Render(window);
         window.display();
-
-        // Print to console
-        std::cout << "\rFrame: " << frame << "\tFrame time: " << deltaTime * 1000.f << "ms \tFPS: " << (1.f / deltaTime) << std::flush;
     }
 
     ImGui::SFML::Shutdown();
