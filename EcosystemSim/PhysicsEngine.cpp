@@ -88,7 +88,8 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 	ray.hit = false;
 	ray.hitWorld = false;
 	// Vector of colliders
-	std::vector<int> found;
+	int found[100];
+	int foundIndex = 0;
 	// Get boundaries
 	float minX, minY, maxX, maxY;
 	minX = (start.x < end.x) ? start.x : end.x;
@@ -109,9 +110,15 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 		float y = m * (i * 100.f) + b;
 		// Add left/right cell contents
 		int index = getGridIndexFromPos(sf::Vector2f(i * 100.f - 1.f, y));
-		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
+			found[foundIndex] = idx;
+			foundIndex++;
+		}
 		index = getGridIndexFromPos(sf::Vector2f(i * 100.f + 1.f, y));
-		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
+			found[foundIndex] = idx;
+			foundIndex++;
+		}
 	}
 
 	// Find intersections with grid along Y
@@ -121,14 +128,22 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 		float x = ((i * 100.f) - b)/m;
 		// Add left/right cell contents
 		int index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f - 1.f));
-		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
+			found[foundIndex] = idx;
+			foundIndex++;
+		}
 		index = getGridIndexFromPos(sf::Vector2f(x, i * 100.f + 1.f));
-		for (int idx : grid[index].colliderIdx) found.emplace_back(idx);
+		if (indexIsValid(index)) for (int idx : grid[index].colliderIdx) {
+			found[foundIndex] = idx;
+			foundIndex++;
+		}
 	}
 
 	// Find closest intersection
 	float closestDistSqr = 9999999999999.f;
-	for (int idx : found) {
+	for (int i = 0; i < foundIndex; i++) {
+		int idx = found[i];
+
 		// Prevent self detection
 		if (idx == senderIndex) continue;
 
@@ -188,7 +203,7 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 
 int PhysicsEngine::getGridIndexFromPos(sf::Vector2f _pos)
 {
-	int x = floorf((int)(_pos.x / 100.f) % 128);
+	int x = fmod((int)(_pos.x / 100.f), 128);
 	int y = floorf(_pos.y / 100.f);
 	int i = y * 128 + x;
 	return i;
@@ -300,4 +315,9 @@ void PhysicsEngine::recalculateIndex(int _index)
 		grid[newGridIndex].colliderIdx.push_back(_index);
 		colliders[_index].gridIdx = newGridIndex;
 	}
+}
+
+bool PhysicsEngine::indexIsValid(int _index)
+{
+	return (_index > 0 && _index < 128*128);
 }

@@ -35,4 +35,5 @@ class PhysicsEngine
 		void solveCollision(int _index, int _otherIndex);
 		void keepInBounds(int _index);
 		void recalculateIndex(int _index);
+		bool indexIsValid(int _index);
 };

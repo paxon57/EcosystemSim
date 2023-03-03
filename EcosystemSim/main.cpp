@@ -48,7 +48,7 @@ int main()
     window.setFramerateLimit(maxFPS);
 
     // Test //////////////////////////////////
-    const int numCreatures = 5000;
+    const int numCreatures = 10000;
     int creaturesLeft = numCreatures;
     float interval = 0.1f;
     float curInterval = interval;
@@ -95,33 +95,20 @@ int main()
             else creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
         }
 
-        for (Creature creature : creatures) {
+        for (Creature& creature : creatures) {
             creature.update(deltaTime);
         }
-
-        Raycast ray;
-        phys.raycast(0, ray, sf::Vector2f(4000.f, 10000.f), sf::Vector2f(7000.f, 10000.f));
-        sf::VertexArray line(sf::Lines, 2);
-        line[0].position = sf::Vector2f(4000.f, 10000.f);
-        line[0].color = sf::Color::Red;
-        line[1].position = sf::Vector2f(4000.f + ray.distance, 10000.f);
-        line[1].color = sf::Color::Red;
-
         phys.update(fixeddt, 4);
 
-        for (Creature creature : creatures) {
+        for (Creature& creature : creatures) {
             creature.draw();
         }
         ////////////////////////////////////
         window.draw(creaturesQuads, &creatureTexture);
-        window.draw(line);
         window.display();
 
         // Print to console
-        //printf("Frame: %lu | Frametime: %fms | FPS: %f\r", frame, deltaTime * 1000.f, 1.f / deltaTime);
-        std::cout << "\rFrame: " << frame << "\tFrame time: " << deltaTime * 1000.f <<
-            "ms \tFPS: " << (1.f / deltaTime) << std::flush;
-        printf("\tHit: %d, Hit world: %d, Dist: %f", ray.hit, ray.hitWorld, ray.distance);
+        std::cout << "\rFrame: " << frame << "\tFrame time: " << deltaTime * 1000.f << "ms \tFPS: " << (1.f / deltaTime) << std::flush;
     }
 
     return 0;
