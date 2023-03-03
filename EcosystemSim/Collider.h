@@ -1,10 +1,12 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
+enum CreatureType { Prey, Predator };
+
 class Collider
 {
 	public:
-		Collider(sf::Vector2f _pos = sf::Vector2f(), float _radius = 50.f);
+		Collider(sf::Vector2f _pos = sf::Vector2f(), float _radius = 50.f, CreatureType _type = CreatureType::Prey);
 
 		float radius;
 		float maxSpeed = 100.f;
@@ -13,6 +15,8 @@ class Collider
 		int idx;
 
 		sf::Vector2f pos;
+
+		CreatureType type;
 
 		void addForce(sf::Vector2f force);
 		void update(float dt);

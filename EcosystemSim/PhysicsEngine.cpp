@@ -6,7 +6,7 @@ PhysicsEngine::PhysicsEngine(float _size) :
 {
 }
 
-int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
+int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius, CreatureType _type)
 {
 	int index = -1;
 	// Look for free spot in array
@@ -17,7 +17,7 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius)
 			index = i;
 
 			// Add collider
-			colliders[i] = Collider(_pos, _radius);
+			colliders[i] = Collider(_pos, _radius, _type);
 			colliders[i].idx = index;
 
 			// Add imperfectinos
@@ -135,6 +135,7 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 						ray.hit = true;
 						ray.targetIndex = idx;
 						ray.distance = sqrt(distSqr);
+						ray.prey = (colliders[idx].type == CreatureType::Prey) ? true : false;
 					}
 				}
 			}

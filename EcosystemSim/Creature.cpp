@@ -2,7 +2,7 @@
 #include "global.h"
 
 Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
-	colliderIndex(_phys.newCollider(_pos)),
+	colliderIndex(_phys.newCollider(_pos, 50.f, _type)),
 	type(_type),
 	phys(_phys),
 	rotation(0.f)

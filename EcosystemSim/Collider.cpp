@@ -1,11 +1,12 @@
 #include "Collider.h"
 
-Collider::Collider(sf::Vector2f _pos, float _radius) :
+Collider::Collider(sf::Vector2f _pos, float _radius, CreatureType _type) :
 	radius(_radius),
 	gridIdx(0),
 	pos(_pos),
 	lastPos(_pos),
-	idx(-1) {}
+	idx(-1),
+	type(_type) {}
 
 void Collider::addForce(sf::Vector2f force)
 {

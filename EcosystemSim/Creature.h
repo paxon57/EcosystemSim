@@ -7,8 +7,6 @@
 
 const float PI = 3.14159265358979323846;
 
-enum CreatureType { Prey, Predator};
-
 class Creature
 {
 	public:

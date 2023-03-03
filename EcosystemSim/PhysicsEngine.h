@@ -10,7 +10,7 @@ class PhysicsEngine
 {
 	public:
 		PhysicsEngine(float _size);
-		int newCollider(sf::Vector2f _pos, float _radius = 50.f);
+		int newCollider(sf::Vector2f _pos, float _radius = 50.f, CreatureType _type = CreatureType::Prey);
 		void removeCollider(int index);
 		void update(float dt, int subSteps = 1);
 		sf::Vector2f getPos(int index);
