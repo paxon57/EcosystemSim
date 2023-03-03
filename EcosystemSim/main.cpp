@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "imgui/imgui.h"
+#include "imgui/imgui-SFML.h"
 #include "global.h"
 #include "World.h"
 #include "CameraController.h"
@@ -20,6 +22,8 @@ sf::Texture creatureTexture;
 void eventHandler(sf::RenderWindow& window) {
     sf::Event evnt;
     while (window.pollEvent(evnt)) {
+
+        ImGui::SFML::ProcessEvent(evnt);
         switch (evnt.type) {
         case sf::Event::Closed:
             window.close();
@@ -36,6 +40,9 @@ void eventHandler(sf::RenderWindow& window) {
 
 int main()
 {
+    // ImGui
+    ImGui::SFML::Init(window);
+
     // Load textures
     if (!creatureTexture.loadFromFile("creature.png")) return 0;
 
@@ -70,7 +77,9 @@ int main()
         // Get frame time
         frame += 1;
         float deltaTime = frameTimeClock.getElapsedTime().asSeconds();
-        frameTimeClock.restart();
+
+        // ImGui
+        ImGui::SFML::Update(window, frameTimeClock.restart());
 
         // Updates
         cam.update(deltaTime);
@@ -104,12 +113,20 @@ int main()
             creature.draw();
         }
         ////////////////////////////////////
+
+        // ImGui Test
+        ImGui::Begin("Information");
+        ImGui::Text("Test!");
+        ImGui::End();
+
         window.draw(creaturesQuads, &creatureTexture);
+        ImGui::SFML::Render(window);
         window.display();
 
         // Print to console
         std::cout << "\rFrame: " << frame << "\tFrame time: " << deltaTime * 1000.f << "ms \tFPS: " << (1.f / deltaTime) << std::flush;
     }
 
+    ImGui::SFML::Shutdown();
     return 0;
 }
