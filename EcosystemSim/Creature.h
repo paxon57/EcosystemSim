@@ -16,13 +16,13 @@ class Creature
 		float rayLength = 1000.f;
 		float rotation = 0.f;
 		int rayAmount = 5;
+		int colliderIndex;
 
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
 		void draw();
 
 	private:
-		int colliderIndex;
 		float rayAngDiff;
 
 		sf::Vector2f pos;
