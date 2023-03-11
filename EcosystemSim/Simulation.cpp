@@ -1,13 +1,18 @@
 #include "Simulation.h"
 
-Simulation::Simulation()
+Simulation::Simulation(PhysicsEngine& _phys) :
+	phys(_phys)
 {
 }
 
-void Simulation::update()
+void Simulation::update(float dt)
 {
-	if (running) imguiStats();
 	if (!running) imguiSetup();
+	else if (running) {
+		updateCreatures(dt);
+
+		imguiStats();
+	}
 }
 
 void Simulation::imguiStats()
@@ -28,9 +33,40 @@ void Simulation::imguiSetup()
 	ImGui::End();
 }
 
+void Simulation::updateCreatures(float dt)
+{
+	// Update creatures
+	for (Creature& creature : creatures) {
+		creature.update(dt);
+	}
+
+	// Draw creatures
+	for (Creature& creature : creatures) {
+		creature.draw();
+	}
+}
+
 void Simulation::beginSimulation()
 {
-	printf("SIM HAS BEGUN");
+	// Spawn Prey
+	for (size_t i = 0; i < initialPrey; i++)
+	{
+		float x = ((float)rand() / RAND_MAX) * 12800.f;
+		float y = ((float)rand() / RAND_MAX) * 12800.f;
+
+		creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
+		preyAmount++;
+	}
+
+	// Spawn Predators
+	for (size_t i = 0; i < initialPrey; i++)
+	{
+		float x = ((float)rand() / RAND_MAX) * 12800.f;
+		float y = ((float)rand() / RAND_MAX) * 12800.f;
+
+		creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
+		predatorAmount++;
+	}
 
 	running = true;
 }

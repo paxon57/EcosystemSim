@@ -29,5 +29,8 @@ void Collider::update(float dt)
 
 void Collider::addDrag(float dt)
 {
-	addForce(-0.5f * sf::Vector2f(velocity.x * velocity.x, velocity.y * velocity.y) * drag);
+	float speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+	if (speed == 0.f) return;
+	sf::Vector2f velNormalized = velocity / speed;
+	addForce(-0.5f * velNormalized * speed * speed * drag);
 }

@@ -10,7 +10,7 @@ class Collider
 
 		float radius;
 		float maxSpeed = 100.f;
-		float drag = 1.0;
+		float drag = 50.f;
 		int gridIdx;
 		int idx;
 

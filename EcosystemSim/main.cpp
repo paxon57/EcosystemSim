@@ -7,6 +7,7 @@
 #include "CameraController.h"
 #include "Creature.h"
 #include "PhysicsEngine.h"
+#include "Simulation.h"
 
 sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(1024, 1024), "Ecosystem Simulation", sf::Style::Close | sf::Style::Resize);
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
@@ -17,7 +18,7 @@ int amountOfCreatures = 0;
 World world(12800.f);
 PhysicsEngine phys(12800.f);
 CameraController cam(view);
-Simulation sim;
+Simulation sim(phys);
 
 sf::VertexArray creaturesQuads(sf::Quads, 4 * 20000);
 sf::Texture creatureTexture;
@@ -83,7 +84,7 @@ int main()
 
         // Updates
         cam.update(deltaTime);
-        sim.update();
+        sim.update(fixeddt);
         phys.update(fixeddt, 4);
         
         // Draws

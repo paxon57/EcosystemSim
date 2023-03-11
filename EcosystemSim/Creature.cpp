@@ -5,13 +5,7 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	type(_type),
 	phys(_phys),
 	rotation(0.f)
-{
-	// Simulation data
-	if (type == CreatureType::Prey)
-		sim.preyAmount++;
-	else
-		sim.predatorAmount++;
-	
+{	
 	// Setup rays
 	for (size_t i = 0; i < rayAmount; i++)
 	{
