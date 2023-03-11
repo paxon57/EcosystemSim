@@ -4,6 +4,7 @@
 #include "global.h"
 #include "Collider.h"
 #include "PhysicsEngine.h"
+#include "NEAT.h"
 
 const float PI = 3.14159265358979323846;
 
@@ -27,6 +28,7 @@ class Creature
 
 		sf::Vector2f pos;
 		PhysicsEngine& phys;
+		NEAT net;
 		
 		std::vector<Raycast> ray;
 };

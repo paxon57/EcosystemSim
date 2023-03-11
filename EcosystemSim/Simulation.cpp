@@ -59,7 +59,7 @@ void Simulation::beginSimulation()
 	}
 
 	// Spawn Predators
-	for (size_t i = 0; i < initialPrey; i++)
+	for (size_t i = 0; i < initialPredator; i++)
 	{
 		float x = ((float)rand() / RAND_MAX) * 12800.f;
 		float y = ((float)rand() / RAND_MAX) * 12800.f;

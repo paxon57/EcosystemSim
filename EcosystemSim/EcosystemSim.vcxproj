@@ -150,6 +150,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NEAT.cpp" />
     <ClCompile Include="PhysGridCell.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="Raycast.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="NEAT.h" />
     <ClInclude Include="PhysGridCell.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Raycast.h" />

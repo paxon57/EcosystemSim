@@ -4,7 +4,8 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	colliderIndex(_phys.newCollider(_pos, 50.f, _type)),
 	type(_type),
 	phys(_phys),
-	rotation(0.f)
+	rotation(0.f),
+	net(5, 2)
 {	
 	// Setup rays
 	for (size_t i = 0; i < rayAmount; i++)
@@ -28,6 +29,9 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 
 	// Calculate angle between rays
 	rayAngDiff = fov / rayAmount;
+
+	// Test
+	net.mutate();
 }
 
 void Creature::update(float deltaTime) {
@@ -40,7 +44,14 @@ void Creature::update(float deltaTime) {
 	}
 
 	//TEST
-	rotation += (PI / 2.f) * deltaTime;
+	net.setInputs(std::vector<float>{0.5f, 0.4f, 0.3f, 0.2f, -1.f});
+	net.run();
+	std::vector<float> outputs = net.getOutputs();
+	printf("-----------------------------------\n");
+	for (float val : outputs)
+	{
+		printf("%f\n", val);
+	}
 }
 
 void Creature::draw()
