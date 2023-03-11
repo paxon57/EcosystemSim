@@ -18,6 +18,8 @@ class Creature
 		float rotation = 0.f;
 		int rayAmount = 5;
 
+		NEAT net;
+
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
 		void draw();
@@ -28,7 +30,6 @@ class Creature
 
 		sf::Vector2f pos;
 		PhysicsEngine& phys;
-		NEAT net;
 		
 		std::vector<Raycast> ray;
 };

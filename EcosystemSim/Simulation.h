@@ -19,6 +19,7 @@ static class Simulation
 		bool running = false;
 		int initialPrey = 0;
 		int initialPredator = 0;
+		int initialMutations = 1;
 
 		PhysicsEngine& phys;
 

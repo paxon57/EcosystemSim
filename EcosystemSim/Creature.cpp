@@ -30,8 +30,8 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	// Calculate angle between rays
 	rayAngDiff = fov / rayAmount;
 
-	// Test
-	net.mutate();
+	// Set random rotation
+	rotation = ((float)rand() / RAND_MAX) * 2 * PI;
 }
 
 void Creature::update(float deltaTime) {
