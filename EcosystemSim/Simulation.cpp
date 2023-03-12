@@ -7,10 +7,13 @@ Simulation::Simulation(PhysicsEngine& _phys) :
 
 void Simulation::update(float dt)
 {
+	selectedCreature = 0; ////////////////////////
 	if (!running) imguiSetup();
 	else if (running) {
 		updateCreatures(dt);
 
+		if (selectedCreature != -1)
+			imguiCreatureInfo(selectedCreature);
 		imguiStats();
 	}
 }
@@ -32,6 +35,21 @@ void Simulation::imguiSetup()
 	ImGui::Text("Initial Mutations:");
 	ImGui::SliderInt("##", &initialMutations, 1, 10);
 	if (ImGui::Button("BEGIN SIMULATION")) beginSimulation();
+	ImGui::End();
+}
+
+void Simulation::imguiCreatureInfo(int _id)
+{
+	ImGui::Begin("Creature Information");
+
+	ImGui::Value("Creature ID", _id);
+	if (creatures[_id].type == CreatureType::Predator)
+		ImGui::Text("Creature Type: Predator");
+	else
+		ImGui::Text("Creature Type: Prey");
+
+	ImGui::Text("Network: ");
+	creatures[_id].net.draw_net();
 	ImGui::End();
 }
 

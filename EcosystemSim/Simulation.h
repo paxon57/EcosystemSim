@@ -1,6 +1,4 @@
 #pragma once
-#include "imgui/imgui.h"
-#include "imgui/imgui-SFML.h"
 #include "Creature.h"
 
 static class Simulation
@@ -21,10 +19,13 @@ static class Simulation
 		int initialPredator = 0;
 		int initialMutations = 1;
 
+		int selectedCreature = -1;
+
 		PhysicsEngine& phys;
 
 		void imguiStats();
 		void imguiSetup();
+		void imguiCreatureInfo(int _id);
 		void updateCreatures(float dt);
 
 		void beginSimulation();

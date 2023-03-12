@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "imgui/imgui.h"
+#include "imgui/imgui-SFML.h"
 
 struct Node
 {
@@ -7,6 +9,9 @@ struct Node
 		Node(int _id);
 
 		int id;
+		bool isIO = false;
+
+		sf::Vector2f graphPos = sf::Vector2f(0.f, 0.f);
 
 		void addValue(float val);
 		void set(float val);
@@ -14,20 +19,30 @@ struct Node
 		void reset();
 
 	private:
-		float value;
-		float lastValue;
+		float value = 0.f;
+		float lastValue = 0.f;
 };
 
 struct Link
 {
 	public:
-		Link(Node& startNode, Node& endNode, float _weight);
+		Link(int _startNodeIndex, int _endNodeIndex, float _weight);
 
-		bool active;
-		float weight;
+		bool active = true;
+		float weight = 0.f;
 
-		Node& start;
-		Node& end;
+		int startNodeIndex;
+		int endNodeIndex;
+
+		Link& operator= (const Link& x) {
+			if (&x == this) return *this;
+
+			startNodeIndex = x.startNodeIndex;
+			endNodeIndex = x.endNodeIndex;
+			weight = x.weight;
+			active = x.active;
+			return *this;
+		}
 };
 
 class NEAT
@@ -45,9 +60,18 @@ class NEAT
 		void setInputs(std::vector<float> inputs);
 		std::vector<float> getOutputs();
 		void mutate();
+
+		void draw_net();
+
 	private:
 		int lastNodeId = 0;
 
 		bool mutate_link();
+		void mutate_node();
+		void mutate_toggle();
+		void mutate_weight();
+		void mutate_rand_weight();
+
+		void setup_IO_nodes_graph_pos();
 };
 
