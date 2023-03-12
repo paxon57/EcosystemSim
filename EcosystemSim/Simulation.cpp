@@ -1,19 +1,18 @@
 #include "Simulation.h"
 
-Simulation::Simulation(PhysicsEngine& _phys) :
-	phys(_phys)
+Simulation::Simulation(PhysicsEngine& _phys, CameraController& _cam) :
+	phys(_phys),
+	cam(_cam)
 {
 }
 
 void Simulation::update(float dt)
 {
-	selectedCreature = 0; ////////////////////////
 	if (!running) imguiSetup();
 	else if (running) {
 		updateCreatures(dt);
-
-		if (selectedCreature != -1)
-			imguiCreatureInfo(selectedCreature);
+		updateSelection();
+		
 		imguiStats();
 	}
 }
@@ -64,6 +63,52 @@ void Simulation::updateCreatures(float dt)
 	for (Creature& creature : creatures) {
 		creature.draw();
 	}
+}
+
+void Simulation::updateSelection()
+{
+	// Detect middle click
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Middle) && !lastMiddleClick) {
+		bool found = false;
+
+		// Get world mouse pos
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		sf::Vector2f pos = window.mapPixelToCoords(mousePos);
+
+		// Check if clicked on creature
+		for (size_t i = 0; i < creatures.size(); i++) {
+			sf::Vector2f diff = pos - creatures[i].pos;
+			if (diff.x * diff.x + diff.y * diff.y < 2500.f) {
+				// If clicked on creature, select it and enable cam following
+				selectedCreature = i;
+				found = true;
+				camFollowing = true;
+				break;
+			}
+		}
+		// If clicked but creature was not found, deselect
+		if (!found) {
+			selectedCreature = -1;
+			camFollowing = false;
+		}
+	}
+	
+	// Cancel cam following if user tries to move it
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		camFollowing = false;
+
+	// Check if creature is selected
+	if (selectedCreature != -1) {
+		// Camera follow
+		if (camFollowing) {
+			cam.position = creatures[selectedCreature].pos;
+			cam.view.setCenter(cam.position);
+		}
+		// Display creature info
+		imguiCreatureInfo(selectedCreature);
+	}
+
+	lastMiddleClick = sf::Mouse::isButtonPressed(sf::Mouse::Middle);
 }
 
 void Simulation::beginSimulation()

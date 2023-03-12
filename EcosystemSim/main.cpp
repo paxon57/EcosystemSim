@@ -13,12 +13,10 @@ sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(1024, 1024), "Ecosystem
 sf::View view(sf::Vector2f(50.f, 50.f), sf::Vector2f(window.getSize()));
 sf::Clock frameTimeClock;
 
-int amountOfCreatures = 0;
-
 World world(12800.f);
 PhysicsEngine phys(12800.f);
 CameraController cam(view);
-Simulation sim(phys);
+Simulation sim(phys, cam);
 
 sf::VertexArray creaturesQuads(sf::Quads, 4 * 20000);
 sf::Texture creatureTexture;
@@ -79,7 +77,6 @@ int main()
         ImGui::Value("FPS", 1.f / deltaTime);
         ImGui::Value("Frame time (ms)", deltaTime * 1000.f);
         ImGui::Value("Simspeed", fixeddt / deltaTime);
-        ImGui::Value("Creatures", amountOfCreatures);
         ImGui::End();
 
         // Updates

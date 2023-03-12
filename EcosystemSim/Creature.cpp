@@ -45,16 +45,7 @@ void Creature::update(float deltaTime) {
 		sf::Vector2f endPos = pos + sf::Vector2f(cos(ang), sin(ang)) * rayLength;
 		//phys.raycast(colliderIndex, ray[i], pos, endPos);
 	}
-
-	//TEST
-	net.setInputs(std::vector<float>{0.5f, 0.4f, 0.3f, 0.2f, -1.f});
-	net.run();
-	std::vector<float> outputs = net.getOutputs();
-	printf("-----------------------------------\n");
-	for (float val : outputs)
-	{
-		printf("%f\n", val);
-	}
+	
 }
 
 void Creature::draw()

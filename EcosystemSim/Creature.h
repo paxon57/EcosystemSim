@@ -18,6 +18,7 @@ class Creature
 		int rayAmount = 5;
 
 		NEAT net;
+		sf::Vector2f pos;
 
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
@@ -29,7 +30,6 @@ class Creature
 		int colliderIndex;
 		float rayAngDiff;
 
-		sf::Vector2f pos;
 		PhysicsEngine& phys;
 		
 		std::vector<Raycast> ray;
