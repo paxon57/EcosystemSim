@@ -10,6 +10,9 @@ class PhysicsEngine
 {
 	public:
 		PhysicsEngine(float _size);
+
+		Collider colliders[20000];
+
 		int newCollider(sf::Vector2f _pos, float _radius = 50.f, CreatureType _type = CreatureType::Prey);
 		void removeCollider(int index);
 		void update(float dt, int subSteps = 1);
@@ -22,7 +25,6 @@ class PhysicsEngine
 		float size;
 		float deltaTime;
 
-		Collider colliders[20000];
 		PhysGridCell grid[128*128];
 		std::vector<std::future<void>> futures;
 

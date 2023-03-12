@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "sigslot/signal.hpp"
 
 enum CreatureType { Prey, Predator };
 
@@ -15,8 +16,9 @@ class Collider
 		int idx;
 
 		sf::Vector2f pos;
-
 		CreatureType type;
+
+		sigslot::signal<Collider&> Collision;
 
 		void addForce(sf::Vector2f force);
 		void update(float dt);

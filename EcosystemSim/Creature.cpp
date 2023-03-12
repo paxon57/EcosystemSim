@@ -32,6 +32,9 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 
 	// Set random rotation
 	rotation = ((float)rand() / RAND_MAX) * 2 * PI;
+
+	// Subscribe to collision signal
+	phys.colliders[colliderIndex].Collision.connect(&Creature::OnCollision, this);
 }
 
 void Creature::update(float deltaTime) {
@@ -66,4 +69,9 @@ void Creature::draw()
 	creaturesQuads[colliderIndex * 4 + 1].position = pos + transform.transformPoint(50.f, -50.f);
 	creaturesQuads[colliderIndex * 4 + 2].position = pos + transform.transformPoint(50.f, 50.f);
 	creaturesQuads[colliderIndex * 4 + 3].position = pos + transform.transformPoint(-50.f, 50.f);
+}
+
+void Creature::OnCollision(Collider& other)
+{
+	
 }

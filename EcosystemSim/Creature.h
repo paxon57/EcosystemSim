@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include "global.h"
-#include "Collider.h"
 #include "PhysicsEngine.h"
 #include "NEAT.h"
 
@@ -23,6 +22,8 @@ class Creature
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
 		void draw();
+
+		void OnCollision(Collider& other);
 
 	private:
 		int colliderIndex;

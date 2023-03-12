@@ -25,6 +25,9 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{a7d8dfbd-8c26-453b-a2ba-2bfc0ad4b4e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\sigslot">
+      <UniqueIdentifier>{c08ee4f6-9b5f-42da-a584-e04a6e7d8047}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -130,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="NEAT.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sigslot\adapter\boost.hpp">
+      <Filter>Header Files\sigslot</Filter>
+    </ClInclude>
+    <ClInclude Include="sigslot\adapter\qt.hpp">
+      <Filter>Header Files\sigslot</Filter>
+    </ClInclude>
+    <ClInclude Include="sigslot\signal.hpp">
+      <Filter>Header Files\sigslot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

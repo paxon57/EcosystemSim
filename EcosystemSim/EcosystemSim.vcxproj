@@ -175,6 +175,9 @@
     <ClInclude Include="PhysGridCell.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Raycast.h" />
+    <ClInclude Include="sigslot\adapter\boost.hpp" />
+    <ClInclude Include="sigslot\adapter\qt.hpp" />
+    <ClInclude Include="sigslot\signal.hpp" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
