@@ -62,6 +62,14 @@ void Creature::draw()
 	creaturesQuads[colliderIndex * 4 + 3].position = pos + transform.transformPoint(-50.f, 50.f);
 }
 
+void Creature::applySettings(CreatureSettings settings) {
+	hp = settings.hp;
+	dmg = settings.dmg;
+	rayAmount = settings.rayAmount;
+	rayLength = settings.rayDistance * 100.f;
+	fov = (settings.fov / 360.f) * 2 * PI;
+}
+
 void Creature::OnCollision(Collider& other)
 {
 	

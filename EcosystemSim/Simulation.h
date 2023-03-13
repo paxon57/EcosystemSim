@@ -6,12 +6,17 @@
 static class Simulation
 {
 	public:
-		Simulation(PhysicsEngine& _phys, CameraController& _cam);
+		Simulation(CameraController& _cam);
 
 		int preyAmount = 0;
 		int predatorAmount = 0;
 
 		std::vector<Creature> creatures;
+
+		CreatureSettings preySettings;
+		CreatureSettings predatorSettings;
+
+		PhysicsEngine phys;
 
 		void update(float dt);
 
@@ -24,7 +29,6 @@ static class Simulation
 		bool lastMiddleClick = false;
 		bool camFollowing = false;
 
-		PhysicsEngine& phys;
 		CameraController& cam;
 
 		void imguiStats();

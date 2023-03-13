@@ -1,8 +1,8 @@
 #include "Simulation.h"
 
-Simulation::Simulation(PhysicsEngine& _phys, CameraController& _cam) :
-	phys(_phys),
-	cam(_cam)
+Simulation::Simulation(CameraController& _cam) :
+	cam(_cam),
+	phys(12800.f)
 {
 }
 
@@ -13,6 +13,8 @@ void Simulation::update(float dt)
 		updateCreatures(dt);
 		updateSelection();
 		
+		phys.update(dt, 4);
+
 		imguiStats();
 	}
 }
@@ -28,9 +30,24 @@ void Simulation::imguiStats()
 void Simulation::imguiSetup()
 {
 	ImGui::Begin("Simulation Setup");
-	ImGui::Text("Initial Population:");
-	ImGui::InputInt("Prey", &initialPrey);
-	ImGui::InputInt("Predator", &initialPredator);
+	ImGui::Text("Prey Settings:");
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+	ImGui::InputInt("Population", &initialPrey);
+	ImGui::InputInt("HP", &preySettings.hp);
+	ImGui::InputInt("DMG", &preySettings.dmg);
+	ImGui::InputInt("Ray Amount", &preySettings.rayAmount);
+	ImGui::InputFloat("Ray Distance", &preySettings.rayDistance);
+	ImGui::InputFloat("FOV", &preySettings.fov);
+	ImGui::PopItemWidth();
+	ImGui::Text("Predator Settings:");
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+	ImGui::InputInt("Population", &initialPredator);
+	ImGui::InputInt("HP", &predatorSettings.hp);
+	ImGui::InputInt("DMG", &predatorSettings.dmg);
+	ImGui::InputInt("Ray Amount", &predatorSettings.rayAmount);
+	ImGui::InputFloat("Ray Distance", &predatorSettings.rayDistance);
+	ImGui::InputFloat("FOV", &predatorSettings.fov);
+	ImGui::PopItemWidth();
 	ImGui::Text("Initial Mutations:");
 	ImGui::SliderInt("##", &initialMutations, 1, 10);
 	if (ImGui::Button("BEGIN SIMULATION")) beginSimulation();
@@ -120,6 +137,8 @@ void Simulation::beginSimulation()
 		float y = ((float)rand() / RAND_MAX) * 12800.f;
 
 		Creature& creature = creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Prey));
+		creature.applySettings(preySettings);
+		
 		// Mutate
 		for (size_t j = 0; j < initialMutations; j++)
 		{
@@ -135,6 +154,8 @@ void Simulation::beginSimulation()
 		float y = ((float)rand() / RAND_MAX) * 12800.f;
 
 		Creature& creature = creatures.emplace_back(Creature(phys, sf::Vector2f(x, y), CreatureType::Predator));
+		creature.applySettings(predatorSettings);
+		
 		// Mutate
 		for (size_t j = 0; j < initialMutations; j++)
 		{

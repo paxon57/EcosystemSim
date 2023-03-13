@@ -7,6 +7,14 @@
 
 const float PI = 3.14159265358979323846;
 
+struct CreatureSettings {
+	int hp = 4;
+	int dmg = 2;
+	int rayAmount = 5;
+	float rayDistance = 10;
+	float fov = 90;
+};
+
 class Creature
 {
 	public:
@@ -15,7 +23,9 @@ class Creature
 		float fov = PI/2.f;
 		float rayLength = 1000.f;
 		float rotation = 0.f;
+		float hp = 4.f;
 		int rayAmount = 5;
+		int dmg = 2;
 
 		NEAT net;
 		sf::Vector2f pos;
@@ -23,6 +33,7 @@ class Creature
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
 		void draw();
+		void applySettings(CreatureSettings settings);
 
 		void OnCollision(Collider& other);
 
