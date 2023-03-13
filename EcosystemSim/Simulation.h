@@ -3,6 +3,15 @@
 #include "CameraController.h"
 #include "global.h"
 
+struct CollisionInfo {
+	CollisionInfo(int i1, int i2) {
+		index1 = i1;
+		index2 = i2;
+	}
+	int index1;
+	int index2;
+};
+
 static class Simulation
 {
 	public:
@@ -11,7 +20,9 @@ static class Simulation
 		int preyAmount = 0;
 		int predatorAmount = 0;
 
+		std::vector<int> toRemove;
 		std::vector<Creature> creatures;
+		std::vector<CollisionInfo> collisions;
 
 		CreatureSettings preySettings;
 		CreatureSettings predatorSettings;
@@ -19,6 +30,7 @@ static class Simulation
 		PhysicsEngine phys;
 
 		void update(float dt);
+		void OnCollision(int index1, int index2);
 
 	private:
 		bool running = false;
@@ -36,7 +48,8 @@ static class Simulation
 		void imguiCreatureInfo(int _id);
 		void updateCreatures(float dt);
 		void updateSelection();
-
 		void beginSimulation();
+		void processCollisions();
+		void removeDeadCreatures();
 };
 

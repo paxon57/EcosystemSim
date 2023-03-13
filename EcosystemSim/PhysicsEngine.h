@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "PhysGridCell.h"
 #include "Raycast.h"
+#include "sigslot/signal.hpp"
 
 const int numThreads = 12;
 
@@ -13,6 +14,8 @@ class PhysicsEngine
 
 		Collider colliders[20000];
 
+		sigslot::signal<int, int> Collision;
+
 		int newCollider(sf::Vector2f _pos, float _radius = 50.f, CreatureType _type = CreatureType::Prey);
 		void removeCollider(int index);
 		void update(float dt, int subSteps = 1);
@@ -22,6 +25,7 @@ class PhysicsEngine
 		void raycast(int senderIndex, Raycast& ray, sf::Vector2f start, sf::Vector2f end);
 
 	private:
+		bool firstPass = true;
 		float size;
 		float deltaTime;
 

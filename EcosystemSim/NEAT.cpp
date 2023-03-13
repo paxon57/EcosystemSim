@@ -178,7 +178,6 @@ bool NEAT::mutate_link()
 
 	// Create link
 	float weight = ((float)rand() / RAND_MAX) * 4.f - 2.f;
-	printf("Weight: %f\n", weight);
 	links.emplace_back(Link(startNode, endNode, weight));
 	return true;
 }

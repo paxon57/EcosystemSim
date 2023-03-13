@@ -4,12 +4,16 @@ Simulation::Simulation(CameraController& _cam) :
 	cam(_cam),
 	phys(12800.f)
 {
+	// Subscribe to collision event
+	phys.Collision.connect(&Simulation::OnCollision, this);
 }
 
 void Simulation::update(float dt)
 {
 	if (!running) imguiSetup();
 	else if (running) {
+		processCollisions();
+		removeDeadCreatures();
 		updateCreatures(dt);
 		updateSelection();
 		
@@ -17,6 +21,23 @@ void Simulation::update(float dt)
 
 		imguiStats();
 	}
+}
+
+// Collision between colliders, collider indexes passed
+void Simulation::OnCollision(int index1, int index2)
+{
+	// If same type, skip
+	if (phys.colliders[index1].type == phys.colliders[index2].type) return;
+
+	// Avoid duplicates
+	for (CollisionInfo info : collisions) {
+		if ((info.index1 == index1 && info.index2 == index2) ||
+			(info.index2 == index1 && info.index1 == index2))
+			return;
+	}
+
+	// Add to collisions for processing
+	collisions.emplace_back(CollisionInfo(index1, index2));
 }
 
 void Simulation::imguiStats()
@@ -41,12 +62,12 @@ void Simulation::imguiSetup()
 	ImGui::PopItemWidth();
 	ImGui::Text("Predator Settings:");
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
-	ImGui::InputInt("Population", &initialPredator);
-	ImGui::InputInt("HP", &predatorSettings.hp);
-	ImGui::InputInt("DMG", &predatorSettings.dmg);
-	ImGui::InputInt("Ray Amount", &predatorSettings.rayAmount);
-	ImGui::InputFloat("Ray Distance", &predatorSettings.rayDistance);
-	ImGui::InputFloat("FOV", &predatorSettings.fov);
+	ImGui::InputInt("Population ", &initialPredator);
+	ImGui::InputInt("HP ", &predatorSettings.hp);
+	ImGui::InputInt("DMG ", &predatorSettings.dmg);
+	ImGui::InputInt("Ray Amount ", &predatorSettings.rayAmount);
+	ImGui::InputFloat("Ray Distance ", &predatorSettings.rayDistance);
+	ImGui::InputFloat("FOV ", &predatorSettings.fov);
 	ImGui::PopItemWidth();
 	ImGui::Text("Initial Mutations:");
 	ImGui::SliderInt("##", &initialMutations, 1, 10);
@@ -165,4 +186,61 @@ void Simulation::beginSimulation()
 	}
 
 	running = true;
+}
+
+void Simulation::processCollisions()
+{
+	for (CollisionInfo info : collisions) {
+		// Find creatures involved based on collider index
+		Creature* c1 = nullptr;
+		int i1 = 0;
+		Creature* c2 = nullptr;
+		int i2 = 0;
+		for (int i = 0; i < creatures.size(); i++) {
+			if (creatures[i].colliderIndex == info.index1) {
+				c1 = &creatures[i];
+				i1 = i;
+			}
+			if (creatures[i].colliderIndex == info.index2) {
+				c2 = &creatures[i];
+				i2 = i;
+			}
+			
+			if (c1 != nullptr && c2 != nullptr)
+				break;
+		}
+
+		// Return if not found for any reason
+		if (c1 == nullptr || c2 == nullptr) continue;
+		// Apply dmg
+		c1->hp -= c2->dmg;
+		c2->hp -= c1->dmg;
+		// Add toRemove if dead
+		if (c1->hp <= 0)
+			toRemove.emplace_back(i1);
+		if (c2->hp <= 0)
+			toRemove.emplace_back(i2);
+	}
+
+	collisions.clear();
+}
+
+void Simulation::removeDeadCreatures()
+{
+	std::vector<int> removed;
+	for (int i : toRemove)
+	{
+		// Check if not already removed
+		bool duplicate = false;
+		for (int j : removed)
+			if (i == j) duplicate = true;
+
+		if (duplicate) continue;
+
+		// Remove
+		creatures[i] = creatures.back();
+		creatures.pop_back();
+		removed.emplace_back(i);
+	}
+	toRemove.clear();
 }

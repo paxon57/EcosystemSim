@@ -26,6 +26,7 @@ class Creature
 		float hp = 4.f;
 		int rayAmount = 5;
 		int dmg = 2;
+		int colliderIndex = -1;
 
 		NEAT net;
 		sf::Vector2f pos;
@@ -35,14 +36,31 @@ class Creature
 		void draw();
 		void applySettings(CreatureSettings settings);
 
-		void OnCollision(Collider& other);
+		Creature& operator= (const Creature& x) {
+			if (&x == this) return *this;
+			type = x.type;
+			fov = x.fov;
+			rayLength = x.rayLength;
+			rotation = x.rotation;
+			hp = x.hp;
+			rayAmount = x.rayAmount;
+			dmg = x.dmg;
+			colliderIndex = x.colliderIndex;
+			net = x.net;
+			pos = x.pos;
+			rayAngDiff = x.rayAngDiff;
+			phys = x.phys;
+			ray = x.ray;
+			return *this;
+		}
 
 	private:
-		int colliderIndex;
 		float rayAngDiff;
 
-		PhysicsEngine& phys;
-		
 		std::vector<Raycast> ray;
+
+		PhysicsEngine* phys;
+
+		void forwardForce(float force);
 };
 

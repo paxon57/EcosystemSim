@@ -3,7 +3,7 @@
 Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	colliderIndex(_phys.newCollider(_pos, 50.f, _type)),
 	type(_type),
-	phys(_phys),
+	phys(&_phys),
 	rotation(0.f),
 	net(5, 2)
 {	
@@ -32,9 +32,6 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 
 	// Set random rotation
 	rotation = ((float)rand() / RAND_MAX) * 2 * PI;
-
-	// Subscribe to collision signal
-	phys.colliders[colliderIndex].Collision.connect(&Creature::OnCollision, this);
 }
 
 void Creature::update(float deltaTime) {
@@ -43,14 +40,14 @@ void Creature::update(float deltaTime) {
 	{
 		float ang = rotation + (i * rayAngDiff) - (fov / 2.f);
 		sf::Vector2f endPos = pos + sf::Vector2f(cos(ang), sin(ang)) * rayLength;
-		//phys.raycast(colliderIndex, ray[i], pos, endPos);
+		phys->raycast(colliderIndex, ray[i], pos, endPos);
 	}
-	
+	forwardForce(100.f);
 }
 
 void Creature::draw()
 {
-	pos = phys.getPos(colliderIndex);
+	pos = phys->getPos(colliderIndex);
 
 	sf::Transform transform;
 	//transform.translate(pos);
@@ -62,6 +59,12 @@ void Creature::draw()
 	creaturesQuads[colliderIndex * 4 + 3].position = pos + transform.transformPoint(-50.f, 50.f);
 }
 
+void Creature::forwardForce(float _force)
+{
+	sf::Vector2f force(sinf(rotation) * _force, -cosf(rotation) * _force);
+	phys->addForce(colliderIndex, force);
+}
+
 void Creature::applySettings(CreatureSettings settings) {
 	hp = settings.hp;
 	dmg = settings.dmg;
@@ -70,7 +73,3 @@ void Creature::applySettings(CreatureSettings settings) {
 	fov = (settings.fov / 360.f) * 2 * PI;
 }
 
-void Creature::OnCollision(Collider& other)
-{
-	
-}

@@ -57,10 +57,12 @@ void PhysicsEngine::update(float dt, int subSteps)
 	}
 
 	// Collision handling
+	firstPass = true;
 	float subDt = dt / subSteps;
 	for (int i = 0; i < subSteps; i++)
 	{
 		physUpdate(subDt);
+		firstPass = false;
 	}
 }
 
@@ -245,6 +247,8 @@ void PhysicsEngine::checkCellCollisions(int _cellIndex, int _otherCellIndex)
 			if (index1 == index2) continue;
 			// Check collision
 			if (collide(index1, index2)) {
+				if (firstPass)
+					Collision(index1, index2);
 				solveCollision(index1, index2);
 			}
 		}
