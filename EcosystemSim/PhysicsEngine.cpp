@@ -49,7 +49,7 @@ void PhysicsEngine::update(float dt, int subSteps)
 	// Update all colliders
 	for (int i = 0; i < 20000; i++)
 	{
-		if (colliders[i].idx == -1) break;
+		if (colliders[i].idx == -1) continue;
 
 		colliders[i].update(dt);
 		keepInBounds(i);

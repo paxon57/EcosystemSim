@@ -35,6 +35,7 @@ class Creature
 		void update(float deltaTime);
 		void draw();
 		void applySettings(CreatureSettings settings);
+		void death();
 
 		Creature& operator= (const Creature& x) {
 			if (&x == this) return *this;

@@ -237,10 +237,20 @@ void Simulation::removeDeadCreatures()
 
 		if (duplicate) continue;
 
+		// Decrease stats
+		if (creatures[i].type == CreatureType::Prey)
+			preyAmount--;
+		else
+			predatorAmount--;
+
 		// Remove
+		creatures[i].death();
 		creatures[i] = creatures.back();
 		creatures.pop_back();
 		removed.emplace_back(i);
+
+		// Deselect creature if selected
+		if (selectedCreature == i) selectedCreature = -1;
 	}
 	toRemove.clear();
 }

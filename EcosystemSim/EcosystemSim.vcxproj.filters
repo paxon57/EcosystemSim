@@ -51,9 +51,6 @@
     <ClCompile Include="PhysicsEngine.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Raycast.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
@@ -73,6 +70,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NEAT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Raycast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

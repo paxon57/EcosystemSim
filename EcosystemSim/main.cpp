@@ -63,8 +63,9 @@ int main()
         window.clear(sf::Color(127, 140, 141));
         window.setView(view);
         view.setSize(sf::Vector2f(window.getSize()));
+
         // TODO??? Clear creaturesQuad
-        
+
         // Clock handling
         frame += 1;
         float deltaTime = frameTimeClock.getElapsedTime().asSeconds();
