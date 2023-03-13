@@ -26,7 +26,7 @@ static class Simulation
 		int initialPredator = 0;
 		int initialMutations = 1;
 		int selectedCreature = -1;
-		bool lastMiddleClick = false;
+		bool lastClick = false;
 		bool camFollowing = false;
 
 		CameraController& cam;

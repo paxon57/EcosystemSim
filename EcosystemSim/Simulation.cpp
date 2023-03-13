@@ -85,7 +85,7 @@ void Simulation::updateCreatures(float dt)
 void Simulation::updateSelection()
 {
 	// Detect middle click
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Middle) && !lastMiddleClick) {
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !lastClick && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
 		bool found = false;
 
 		// Get world mouse pos
@@ -125,7 +125,7 @@ void Simulation::updateSelection()
 		imguiCreatureInfo(selectedCreature);
 	}
 
-	lastMiddleClick = sf::Mouse::isButtonPressed(sf::Mouse::Middle);
+	lastClick = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 }
 
 void Simulation::beginSimulation()

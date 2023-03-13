@@ -128,7 +128,7 @@ void NEAT::draw_net()
 	}
 	
 	// Draw Links
-	sf::Vector2f offset(25.f, 25.f);
+	sf::Vector2f offset(12.5f, 12.5f);
 	for (Link& link : links) {
 		sf::Color color;
 		if (!link.active)
@@ -150,7 +150,7 @@ void NEAT::draw_net()
 	for (Node& node : nodes)
 	{
 		ImGui::DrawRectFilled(
-			sf::FloatRect(node.graphPos, sf::Vector2f(50.f, 50.f)),
+			sf::FloatRect(node.graphPos, sf::Vector2f(25.f, 25.f)),
 			sf::Color(52, 152, 219),
 			25.f);
 	}
@@ -239,13 +239,13 @@ void NEAT::setup_IO_nodes_graph_pos()
 	// Setup inputs
 	for (int i = 0; i < numInputs; i++)
 	{
-		nodes[i].graphPos = sf::Vector2f(0.f, 60.f * i);
+		nodes[i].graphPos = sf::Vector2f(0.f, 30.f * i);
 	}
 	// Setup outputs
-	float offset = (numInputs - numOutputs) / 2.f * 60.f;
+	float offset = (numInputs - numOutputs) / 2.f * 30.f;
 	for (int i = 0; i < numOutputs; i++)
 	{
-		nodes[numInputs + i].graphPos = sf::Vector2f(500.f, offset + 60.f * i);
+		nodes[numInputs + i].graphPos = sf::Vector2f(500.f, offset + 30.f * i);
 	}
 }
 
