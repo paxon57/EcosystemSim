@@ -2,8 +2,6 @@
 
 Visual Studio Community 2022 Project
 
-SFML required and not included in this repo
-
 Idea of the project is to create continuous simulation of hundreds or thousands of creatures of two types: Prey and Predator
 
 Each creature will contain small Neural Network which will evolve and adapt using a NEAT inspired algorithm and description of that network will be encoded as a gene of the creature. 
