@@ -27,7 +27,7 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius, CreatureType _t
 			colliders[i].gridIdx = gridIndex;
 
 			// Add index to grid
-			grid[gridIndex].colliderIdx.push_back(index);
+			grid[gridIndex].colliderIdx.emplace_back(index);
 
 			return index;
 		}

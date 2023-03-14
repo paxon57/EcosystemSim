@@ -14,6 +14,7 @@ void Simulation::update(float dt)
 	else if (running) {
 		processCollisions();
 		removeDeadCreatures();
+		reproduceCreatures();
 		updateCreatures(dt);
 		updateSelection();
 		
@@ -54,8 +55,8 @@ void Simulation::imguiSetup()
 	ImGui::Text("Prey Settings:");
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 	ImGui::InputInt("Population", &initialPrey);
-	ImGui::InputInt("HP", &preySettings.hp);
-	ImGui::InputInt("DMG", &preySettings.dmg);
+	ImGui::InputFloat("Max Energy", &preySettings.energy);
+	ImGui::InputFloat("DMG", &preySettings.dmg);
 	ImGui::InputInt("Ray Amount", &preySettings.rayAmount);
 	ImGui::InputFloat("Ray Distance", &preySettings.rayDistance);
 	ImGui::InputFloat("FOV", &preySettings.fov);
@@ -63,8 +64,8 @@ void Simulation::imguiSetup()
 	ImGui::Text("Predator Settings:");
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 	ImGui::InputInt("Population ", &initialPredator);
-	ImGui::InputInt("HP ", &predatorSettings.hp);
-	ImGui::InputInt("DMG ", &predatorSettings.dmg);
+	ImGui::InputFloat("Max Energy ", &predatorSettings.energy);
+	ImGui::InputFloat("DMG ", &predatorSettings.dmg);
 	ImGui::InputInt("Ray Amount ", &predatorSettings.rayAmount);
 	ImGui::InputFloat("Ray Distance ", &predatorSettings.rayDistance);
 	ImGui::InputFloat("FOV ", &predatorSettings.fov);
@@ -213,13 +214,17 @@ void Simulation::processCollisions()
 		// Return if not found for any reason
 		if (c1 == nullptr || c2 == nullptr) continue;
 		// Apply dmg
-		c1->hp -= c2->dmg;
-		c2->hp -= c1->dmg;
-		// Add toRemove if dead
-		if (c1->hp <= 0)
+		c1->energy -= c2->dmg;
+		c2->energy -= c1->dmg;
+		// Add toRemove if dead and call OnKill on the killer
+		if (c1->energy <= 0) {
 			toRemove.emplace_back(i1);
-		if (c2->hp <= 0)
+			c2->OnKill();
+		}
+		if (c2->energy <= 0) {
 			toRemove.emplace_back(i2);
+			c1->OnKill();
+		}
 	}
 
 	collisions.clear();
@@ -253,4 +258,30 @@ void Simulation::removeDeadCreatures()
 		if (selectedCreature == i) selectedCreature = -1;
 	}
 	toRemove.clear();
+}
+
+void Simulation::reproduceCreatures()
+{
+	for (int i = 0; i < creatures.size(); i++) {
+		if (creatures[i].canReproduce) {
+			// Reproduction
+			int r = rand();
+			sf::Vector2f randOffset = sf::Vector2f(sinf(r), cosf(r)) * 100.f;
+			Creature& c = creatures.emplace_back(Creature(phys, creatures[i].pos + randOffset, creatures[i].type));
+
+			if (creatures[i].type == CreatureType::Prey) {
+				c.applySettings(preySettings);
+				preyAmount++;
+			}
+			else {
+				c.applySettings(predatorSettings);
+				predatorAmount++;
+			}
+
+			c.net = creatures[i].net;
+			c.net.mutate(); // TODO Add mutation chance
+
+			creatures[i].canReproduce = false;
+		}
+	}
 }

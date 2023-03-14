@@ -8,11 +8,11 @@
 const float PI = 3.14159265358979323846;
 
 struct CreatureSettings {
-	int hp = 4;
-	int dmg = 2;
 	int rayAmount = 5;
-	float rayDistance = 10;
-	float fov = 90;
+	float dmg = 50.f;
+	float rayDistance = 10.f;
+	float fov = 90.f;
+	float energy = 100.f;
 };
 
 class Creature
@@ -23,10 +23,12 @@ class Creature
 		float fov = PI/2.f;
 		float rayLength = 1000.f;
 		float rotation = 0.f;
-		float hp = 4.f;
+		float maxEnergy = 999.f;
+		float energy = 999.f;
+		float dmg = 50.f;
 		int rayAmount = 5;
-		int dmg = 2;
 		int colliderIndex = -1;
+		bool canReproduce = false;
 
 		NEAT net;
 		sf::Vector2f pos;
@@ -36,6 +38,7 @@ class Creature
 		void draw();
 		void applySettings(CreatureSettings settings);
 		void death();
+		void OnKill();
 
 		Creature& operator= (const Creature& x) {
 			if (&x == this) return *this;
@@ -43,7 +46,8 @@ class Creature
 			fov = x.fov;
 			rayLength = x.rayLength;
 			rotation = x.rotation;
-			hp = x.hp;
+			maxEnergy = x.maxEnergy;
+			energy = x.energy;
 			rayAmount = x.rayAmount;
 			dmg = x.dmg;
 			colliderIndex = x.colliderIndex;
@@ -63,5 +67,6 @@ class Creature
 		PhysicsEngine* phys;
 
 		void forwardForce(float force);
+		void manageEnergy(float dt);
 };
 

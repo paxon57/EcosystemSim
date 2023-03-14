@@ -7,12 +7,6 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 	rotation(0.f),
 	net(1, 1)
 {	
-	// Setup rays
-	for (size_t i = 0; i < rayAmount; i++)
-	{
-		ray.emplace_back(Raycast());
-	}
-
 	// Setup texture
 	if (type == CreatureType::Prey) {
 		creaturesQuads[colliderIndex * 4].texCoords = sf::Vector2f(0.f, 0.f);
@@ -35,6 +29,9 @@ Creature::Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type):
 }
 
 void Creature::update(float deltaTime) {
+	
+	manageEnergy(deltaTime);
+
 	// Cast rays
 	for (int i = 0; i < rayAmount; i++)
 	{
@@ -59,10 +56,12 @@ void Creature::update(float deltaTime) {
 	// Run network
 	net.setInputs(inputs);
 	net.run();
-	std::vector<float> outputs = net.getOutputs();
+	std::vector<float> outputs = net.getOutputs(); // Outputs range from -2 to 2
 
-	// Apply force
+	// Apply forward force and use energy to do it, 10 units per sec at full speed
 	forwardForce(outputs[0] * 100.f);
+	energy -= fabs(outputs[0]) * 5.f * deltaTime;
+
 	// Apply rotation
 	rotation += outputs[1] * 1.5f * deltaTime;
 }
@@ -93,18 +92,47 @@ void Creature::death()
 	creaturesQuads[colliderIndex * 4 + 3].position = sf::Vector2f(0.f, 0.f);
 }
 
+void Creature::OnKill() {
+	if (type == CreatureType::Predator) {
+		energy += 50.f;
+	}
+}
+
 void Creature::forwardForce(float _force)
 {
 	sf::Vector2f force(sinf(rotation) * _force, -cosf(rotation) * _force);
 	phys->addForce(colliderIndex, force);
 }
 
+void Creature::manageEnergy(float dt)
+{
+	// Gain 2 energy per sec as Prey
+	// Lose 2 energy per sec as Predator
+	if (type == CreatureType::Prey)
+		energy += 2.f * dt;
+	else 
+		energy -= 2.f * dt;
+
+	// Reproduce if energy full, use half of it
+	if (energy > maxEnergy) {
+		canReproduce = true;
+		energy = maxEnergy / 2.f;
+	}
+}
+
 void Creature::applySettings(CreatureSettings settings) {
-	hp = settings.hp;
 	dmg = settings.dmg;
 	rayAmount = settings.rayAmount;
 	rayLength = settings.rayDistance * 100.f;
 	fov = (settings.fov / 360.f) * 2 * PI;
+	maxEnergy = settings.energy;
+	energy = maxEnergy * 0.75f;
+
+	// Setup rays
+	for (size_t i = 0; i < rayAmount; i++)
+	{
+		ray.emplace_back(Raycast());
+	}
 
 	net = NEAT(rayAmount * 2 + 1, 2);
 }

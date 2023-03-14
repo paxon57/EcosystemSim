@@ -51,5 +51,6 @@ static class Simulation
 		void beginSimulation();
 		void processCollisions();
 		void removeDeadCreatures();
+		void reproduceCreatures();
 };
 
