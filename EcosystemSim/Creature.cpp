@@ -59,7 +59,7 @@ void Creature::update(float deltaTime) {
 	std::vector<float> outputs = net.getOutputs(); // Outputs range from -2 to 2
 
 	// Apply forward force and use energy to do it, 5 units per sec at full speed
-	forwardForce(outputs[0] * 100.f);
+	forwardForce(outputs[0] * 300.f);
 	energy -= fabs(outputs[0]) * 2.5f * deltaTime;
 
 	// Apply rotation
@@ -106,7 +106,7 @@ void Creature::drawRays()
 
 void Creature::OnKill() {
 	if (type == CreatureType::Predator) {
-		energy += maxEnergy / 2.f;
+		energy += maxEnergy * 0.75f;
 	}
 }
 
@@ -118,12 +118,12 @@ void Creature::forwardForce(float _force)
 
 void Creature::manageEnergy(float dt)
 {
-	// Gain 2 energy per sec as Prey
-	// Lose 1 energy per sec as Predator
+	// Gain 4% energy per sec as Prey
+	// Lose 2% energy per sec as Predator
 	if (type == CreatureType::Prey)
-		energy += 2.f * dt;
+		energy += (maxEnergy / 25.f) * dt;
 	else 
-		energy -= 1.f * dt;
+		energy -= (maxEnergy / 50.f) * dt;
 
 	// Reproduce if energy full, use half of it
 	if (energy > maxEnergy) {

@@ -51,7 +51,7 @@ int main()
     srand(time(NULL));
 
     // Framerate limit
-    int maxFPS = 60;
+    int maxFPS = 30;
     float fixeddt = 1.f / (float)maxFPS;;
     window.setFramerateLimit(maxFPS);
     
