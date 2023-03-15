@@ -35,7 +35,7 @@ void Creature::update(float deltaTime) {
 	// Cast rays
 	for (int i = 0; i < rayAmount; i++)
 	{
-		float ang = rotation + (i * rayAngDiff) - (fov / 2.f);
+		float ang = rotation + (i * rayAngDiff) - (fov / 2.f) - PI/2.f;
 		sf::Vector2f endPos = pos + sf::Vector2f(cos(ang), sin(ang)) * rayLength;
 		phys->raycast(colliderIndex, ray[i], pos, endPos);
 	}
@@ -58,9 +58,9 @@ void Creature::update(float deltaTime) {
 	net.run();
 	std::vector<float> outputs = net.getOutputs(); // Outputs range from -2 to 2
 
-	// Apply forward force and use energy to do it, 10 units per sec at full speed
+	// Apply forward force and use energy to do it, 5 units per sec at full speed
 	forwardForce(outputs[0] * 100.f);
-	energy -= fabs(outputs[0]) * 5.f * deltaTime;
+	energy -= fabs(outputs[0]) * 2.5f * deltaTime;
 
 	// Apply rotation
 	rotation += outputs[1] * 1.5f * deltaTime;
@@ -92,9 +92,21 @@ void Creature::death()
 	creaturesQuads[colliderIndex * 4 + 3].position = sf::Vector2f(0.f, 0.f);
 }
 
+void Creature::drawRays()
+{
+	// Draw rays
+	for (int i = 0; i < rayAmount; i++)
+	{
+		float ang = rotation + (i * rayAngDiff) - (fov / 2.f) - PI/2.f;
+		sf::Vector2f endPos = pos + sf::Vector2f(cos(ang), sin(ang)) * ray[i].distance;
+		lines[i * 2].position = pos;
+		lines[i * 2 + 1].position = endPos;
+	}
+}
+
 void Creature::OnKill() {
 	if (type == CreatureType::Predator) {
-		energy += 50.f;
+		energy += maxEnergy / 2.f;
 	}
 }
 
@@ -107,11 +119,11 @@ void Creature::forwardForce(float _force)
 void Creature::manageEnergy(float dt)
 {
 	// Gain 2 energy per sec as Prey
-	// Lose 2 energy per sec as Predator
+	// Lose 1 energy per sec as Predator
 	if (type == CreatureType::Prey)
 		energy += 2.f * dt;
 	else 
-		energy -= 2.f * dt;
+		energy -= 1.f * dt;
 
 	// Reproduce if energy full, use half of it
 	if (energy > maxEnergy) {
@@ -135,5 +147,6 @@ void Creature::applySettings(CreatureSettings settings) {
 	}
 
 	net = NEAT(rayAmount * 2 + 1, 2);
+	rayAngDiff = fov / rayAmount;
 }
 

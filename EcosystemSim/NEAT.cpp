@@ -41,6 +41,17 @@ NEAT::NEAT(int _numInputs, int _numOutputs) :
 	lastNodeId = _numInputs + _numOutputs - 1;
 	
 	setup_IO_nodes_graph_pos();
+
+	// Create links between IO with 50% chance
+	for (int i = 0; i < numOutputs; i++)
+	{
+		for (int j = 0; j < numInputs; j++)
+		{
+			if (rand() / (float)RAND_MAX < 0.5f) {
+				links.emplace_back(Link(j, numInputs + i, (rand() / (float)RAND_MAX) * 4.f - 2.f));
+			}
+		}
+	}
 }
 
 void NEAT::run()

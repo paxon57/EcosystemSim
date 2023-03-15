@@ -18,15 +18,23 @@ void Simulation::update(float dt)
 		updateCreatures(dt);
 		updateSelection();
 		
+		if (selectedCreature != -1)
+			creatures[selectedCreature].drawRays();
+
 		phys.update(dt, 4);
 
 		imguiStats();
+
+		if (collisionHandlingDelay)
+			collisionHandlingDelay = false;
 	}
 }
 
 // Collision between colliders, collider indexes passed
 void Simulation::OnCollision(int index1, int index2)
 {
+	if (collisionHandlingDelay) return;
+
 	// If same type, skip
 	if (phys.colliders[index1].type == phys.colliders[index2].type) return;
 
@@ -85,6 +93,8 @@ void Simulation::imguiCreatureInfo(int _id)
 		ImGui::Text("Creature Type: Predator");
 	else
 		ImGui::Text("Creature Type: Prey");
+
+	ImGui::Value("Energy", creatures[_id].energy);
 
 	ImGui::Text("Network: ");
 	creatures[_id].net.draw_net();
@@ -213,9 +223,11 @@ void Simulation::processCollisions()
 
 		// Return if not found for any reason
 		if (c1 == nullptr || c2 == nullptr) continue;
+
 		// Apply dmg
 		c1->energy -= c2->dmg;
 		c2->energy -= c1->dmg;
+
 		// Add toRemove if dead and call OnKill on the killer
 		if (c1->energy <= 0) {
 			toRemove.emplace_back(i1);
@@ -235,6 +247,8 @@ void Simulation::removeDeadCreatures()
 	std::vector<int> removed;
 	for (int i : toRemove)
 	{
+		if (i >= creatures.size()) continue;
+
 		// Check if not already removed
 		bool duplicate = false;
 		for (int j : removed)
@@ -248,14 +262,18 @@ void Simulation::removeDeadCreatures()
 		else
 			predatorAmount--;
 
+		// Deselect creature if selected
+		if (selectedCreature == i) selectedCreature = -1;
+
+		// Move selection if selected is last
+		if (selectedCreature == creatures.size() - 1) selectedCreature = i;
+
 		// Remove
 		creatures[i].death();
 		creatures[i] = creatures.back();
 		creatures.pop_back();
 		removed.emplace_back(i);
 
-		// Deselect creature if selected
-		if (selectedCreature == i) selectedCreature = -1;
 	}
 	toRemove.clear();
 }
@@ -266,8 +284,9 @@ void Simulation::reproduceCreatures()
 		if (creatures[i].canReproduce) {
 			// Reproduction
 			int r = rand();
-			sf::Vector2f randOffset = sf::Vector2f(sinf(r), cosf(r)) * 100.f;
-			Creature& c = creatures.emplace_back(Creature(phys, creatures[i].pos + randOffset, creatures[i].type));
+			sf::Vector2f pos = creatures[i].pos + sf::Vector2f(sinf(r), cosf(r)) * 100.f;
+			keepInBounds(pos);
+			Creature& c = creatures.emplace_back(Creature(phys, pos, creatures[i].type));
 
 			if (creatures[i].type == CreatureType::Prey) {
 				c.applySettings(preySettings);
@@ -283,5 +302,17 @@ void Simulation::reproduceCreatures()
 
 			creatures[i].canReproduce = false;
 		}
+
+		// No energy death
+		if (creatures[i].energy < 0.f)
+			toRemove.emplace_back(i);
 	}
+}
+
+void Simulation::keepInBounds(sf::Vector2f& pos)
+{
+	if (pos.x < 50.f) pos.x = 50.f;
+	if (pos.x > 12750.f) pos.x = 12750.f;
+	if (pos.y < 50.f) pos.y = 50.f;
+	if (pos.y > 12750.f) pos.y = 12750.f;
 }

@@ -17,6 +17,7 @@ CameraController cam(view);
 Simulation sim(cam);
 
 sf::VertexArray creaturesQuads(sf::Quads, 4 * 20000);
+sf::VertexArray lines(sf::Lines, 100);
 sf::Texture creatureTexture;
 
 void eventHandler(sf::RenderWindow& window) {
@@ -85,6 +86,7 @@ int main()
         // Draws
         world.draw();
         window.draw(creaturesQuads, &creatureTexture);
+        window.draw(lines);
         ImGui::SFML::Render(window);
         window.display();
     }

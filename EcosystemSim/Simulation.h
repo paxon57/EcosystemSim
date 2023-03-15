@@ -34,12 +34,13 @@ static class Simulation
 
 	private:
 		bool running = false;
-		int initialPrey = 0;
-		int initialPredator = 0;
+		int initialPrey = 500;
+		int initialPredator = 500;
 		int initialMutations = 1;
 		int selectedCreature = -1;
 		bool lastClick = false;
 		bool camFollowing = false;
+		bool collisionHandlingDelay = true;
 
 		CameraController& cam;
 
@@ -52,5 +53,6 @@ static class Simulation
 		void processCollisions();
 		void removeDeadCreatures();
 		void reproduceCreatures();
+		void keepInBounds(sf::Vector2f& _pos);
 };
 

@@ -12,7 +12,7 @@ struct CreatureSettings {
 	float dmg = 50.f;
 	float rayDistance = 10.f;
 	float fov = 90.f;
-	float energy = 100.f;
+	float energy = 200.f;
 };
 
 class Creature
@@ -36,6 +36,7 @@ class Creature
 		Creature(PhysicsEngine& _phys, sf::Vector2f _pos, CreatureType _type = CreatureType::Prey);
 		void update(float deltaTime);
 		void draw();
+		void drawRays();
 		void applySettings(CreatureSettings settings);
 		void death();
 		void OnKill();
