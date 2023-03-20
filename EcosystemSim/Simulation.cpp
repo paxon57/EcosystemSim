@@ -79,7 +79,9 @@ void Simulation::imguiSetup()
 	ImGui::InputFloat("FOV ", &predatorSettings.fov);
 	ImGui::PopItemWidth();
 	ImGui::Text("Initial Mutations:");
-	ImGui::SliderInt("##", &initialMutations, 1, 10);
+	ImGui::SliderInt("##", &initialMutations, 0, 10);
+	ImGui::Text("Mutation Chance:");
+	ImGui::SliderFloat("####", &mutationChance, 0.f, 1.f);
 	if (ImGui::Button("BEGIN SIMULATION")) beginSimulation();
 	ImGui::End();
 }
@@ -298,7 +300,9 @@ void Simulation::reproduceCreatures()
 			}
 
 			c.net = creatures[i].net;
-			c.net.mutate(); // TODO Add mutation chance
+
+			if ((float)rand()/RAND_MAX < mutationChance)
+				c.net.mutate();
 
 			creatures[i].canReproduce = false;
 		}

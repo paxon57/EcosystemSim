@@ -36,11 +36,12 @@ static class Simulation
 		bool running = false;
 		int initialPrey = 500;
 		int initialPredator = 500;
-		int initialMutations = 1;
+		int initialMutations = 0;
 		int selectedCreature = -1;
 		bool lastClick = false;
 		bool camFollowing = false;
 		bool collisionHandlingDelay = true;
+		float mutationChance = 0.5f;
 
 		CameraController& cam;
 
