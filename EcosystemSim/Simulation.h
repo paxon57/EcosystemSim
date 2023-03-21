@@ -45,10 +45,13 @@ static class Simulation
 
 		CameraController& cam;
 
+		std::vector<std::future<void>> futures;
+
 		void imguiStats();
 		void imguiSetup();
 		void imguiCreatureInfo(int _id);
 		void updateCreatures(float dt);
+		void updateCreaturesThread(int i1, int i2, float dt);
 		void updateSelection();
 		void beginSimulation();
 		void processCollisions();

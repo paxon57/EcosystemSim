@@ -105,14 +105,30 @@ void Simulation::imguiCreatureInfo(int _id)
 
 void Simulation::updateCreatures(float dt)
 {
-	// Update creatures
-	for (Creature& creature : creatures) {
-		creature.update(dt);
+	// Threading
+	int di = floor(creatures.size() / numThreads);
+
+	for (int i = 0; i < numThreads; i++)
+	{
+		int i1 = di * i;
+		int i2;
+		if (i == numThreads - 1) i2 = creatures.size();
+		else i2 = di * (i + 1);
+		futures.push_back(std::async([this, i1, i2, dt] { updateCreaturesThread(i1, i2, dt); }));
 	}
+	futures.clear();
 
 	// Draw creatures
 	for (Creature& creature : creatures) {
 		creature.draw();
+	}
+}
+
+void Simulation::updateCreaturesThread(int i1, int i2, float dt)
+{
+	// Update creatures
+	for (int i = i1; i < i2; i++) {
+		creatures[i].update(dt);
 	}
 }
 
