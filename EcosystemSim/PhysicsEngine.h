@@ -5,7 +5,7 @@
 #include "Raycast.h"
 #include "sigslot/signal.hpp"
 
-const int numThreads = 12;
+const int numThreads = 4;
 
 class PhysicsEngine
 {

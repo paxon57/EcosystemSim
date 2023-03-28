@@ -109,7 +109,7 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 	int maxYint = floor(maxY / 100.f);
 
 	// Loop through relevant part of the grid and find closest intersection
-	float closestDistSqr = 9999999999999.f;
+	float closestDistSqr = 9999999.f;
 	for (int x = minXint; x <= maxXint; x++)
 	{
 		for (int y = minYint; y <= maxYint; y++)
