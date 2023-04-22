@@ -23,7 +23,9 @@ int PhysicsEngine::newCollider(sf::Vector2f _pos, float _radius, CreatureType _t
 			// Add imperfectinos
 			colliders[i].radius += (rand() / (float)RAND_MAX) - 0.5f;
 
-			int gridIndex = getGridIndexFromPos(_pos);
+			keepInBounds(index);
+
+			int gridIndex = getGridIndexFromPos(colliders[i].pos);
 			colliders[i].gridIdx = gridIndex;
 
 			// Add index to grid
@@ -88,7 +90,6 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 	// Reset ray
 	ray.targetIndex = -1;
 	ray.hit = false;
-	ray.hitWorld = false;
 	// Get boundaries
 	float minX, minY, maxX, maxY;
 	minX = (start.x < end.x) ? start.x : end.x;
@@ -144,40 +145,8 @@ void PhysicsEngine::raycast(int senderIndex, Raycast& ray, sf::Vector2f start, s
 		}
 	}
 
-	// Check for world hit if no colliders were hit
-	if (!ray.hit) {
-		sf::Vector2f hitPos = end;
-		if (minX < 0.f) {
-			ray.hitWorld = true;
-			hitPos.x = 0.f;
-			hitPos.y = b;
-			sf::Vector2f diff = hitPos - start;
-			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
-		}
-		else if (maxX > 12800.f) {
-			ray.hitWorld = true;
-			hitPos.x = 12800.f;
-			hitPos.y = m * 12800.f + b;
-			sf::Vector2f diff = hitPos - start;
-			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
-		}
-		else if (minY < 0.f) {
-			ray.hitWorld = true;
-			hitPos.y = 0.f;
-			hitPos.x = (-b) / m;
-			sf::Vector2f diff = hitPos - start;
-			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
-		}
-		else if (maxY > 12800.f) {
-			ray.hitWorld = true;
-			hitPos.y = 12800.f;
-			hitPos.x = (12800.f - b) / m;
-			sf::Vector2f diff = hitPos - start;
-			ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
-		}
-	}
 	// Set distance if nothing hit
-	if (!ray.hit && !ray.hitWorld) {
+	if (!ray.hit) {
 		sf::Vector2f diff = end - start;
 		ray.distance = sqrt(diff.x * diff.x + diff.y * diff.y);
 	}
@@ -279,16 +248,33 @@ void PhysicsEngine::solveCollision(int _index, int _otherIndex)
 	keepInBounds(_index);
 	keepInBounds(_otherIndex);
 
-	//recalculateIndex(_index);
-	//recalculateIndex(_otherIndex);
+	recalculateIndex(_index);
+	recalculateIndex(_otherIndex);
 }
 
 void PhysicsEngine::keepInBounds(int _index)
 {
-	if (colliders[_index].pos.x < colliders[_index].radius) colliders[_index].pos.x = colliders[_index].radius;
+	/*if (colliders[_index].pos.x < colliders[_index].radius) colliders[_index].pos.x = colliders[_index].radius;
 	if (colliders[_index].pos.y < colliders[_index].radius) colliders[_index].pos.y = colliders[_index].radius;
 	if (colliders[_index].pos.x > size - colliders[_index].radius) colliders[_index].pos.x = size - colliders[_index].radius;
-	if (colliders[_index].pos.y > size - colliders[_index].radius) colliders[_index].pos.y = size - colliders[_index].radius;
+	if (colliders[_index].pos.y > size - colliders[_index].radius) colliders[_index].pos.y = size - colliders[_index].radius;*/
+
+	if (colliders[_index].pos.x < 0.f) {
+		colliders[_index].pos.x = size - 1.f;
+		colliders[_index].lastPos.x = size - 1.f;
+	}
+	if (colliders[_index].pos.y < 0.f) {
+		colliders[_index].pos.y = size - 1.f;
+		colliders[_index].lastPos.y = size - 1.f;
+	}
+	if (colliders[_index].pos.x >= size) {
+		colliders[_index].pos.x = 1.f;
+		colliders[_index].lastPos.x = 1.f;
+	}
+	if (colliders[_index].pos.y >= size) {
+		colliders[_index].pos.y = 1.f;
+		colliders[_index].lastPos.y = 1.f;
+	}
 }
 
 void PhysicsEngine::recalculateIndex(int _index)

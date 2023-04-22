@@ -6,9 +6,11 @@ PhysGridCell::PhysGridCell()
 
 void PhysGridCell::remove(int index)
 {
-	colliderIdx.erase(
+	/*colliderIdx.erase(
 		std::remove(colliderIdx.begin(), colliderIdx.end(), index),
 		colliderIdx.end()
-	);
+	);*/
+
+	std::erase(colliderIdx, index);
 	//std::vector<int>::iterator it = std::find();
 }

@@ -42,14 +42,14 @@ void Creature::update(float deltaTime) {
 
 	// Prepare inputs 
 	// [0] - ray 0 dist
-	// [1] - type hit: -1 = no hit / friend hit, 0 = world hit, 1 = enemyhit
+	// [1] - type hit: -1 = friend hit, 0 = no hit, 1 = enemy hit
 	// ... repeat for all rays ...
 	// [Last] bias = 1
 	std::vector<float> inputs(rayAmount * 2 + 1);
 	
 	for (int i = 0; i < rayAmount; i++) {
 		inputs[i * 2] = ray[i].distance / rayLength;
-		inputs[i * 2 + 1] = ray[i].hit ? (ray[i].hitWorld ? 0 : ((ray[i].prey && type == CreatureType::Predator) || (!ray[i].prey && type == CreatureType::Prey)) ? 1.f : -1.f) : -1.f;
+		inputs[i * 2 + 1] = ray[i].hit ? ((ray[i].prey && type == CreatureType::Predator) || (!ray[i].prey && type == CreatureType::Prey) ? 1.f : -1.f) : 0.f;
 	}
 	inputs[inputs.size() - 1] = 1.f; // Bias
 
