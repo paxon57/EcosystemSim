@@ -1,4 +1,4 @@
-# EcosystemSim [WIP]
+# EcosystemSim
 
 Visual Studio Community 2022 Project
 
